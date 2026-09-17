@@ -13,6 +13,9 @@ const STORAGE_KEY = "cursed_auth_user";
 const NAME_KEY = "cursed-name";
 const REMEMBERED_CREDENTIALS_KEY = "cursed_remembered_credentials";
 
+/**
+ * Pure getter: never writes to storage or dispatches events.
+ */
 export function getStoredAuthUser(): AuthUser | null {
   if (typeof window === "undefined") return null;
   try {
@@ -24,23 +27,28 @@ export function getStoredAuthUser(): AuthUser | null {
     // fallback
   }
 
-  // Check fallback session/local name
-  const legacyName =
-    window.sessionStorage.getItem(NAME_KEY) ||
-    window.localStorage.getItem(NAME_KEY);
-  if (legacyName) {
-    const user: AuthUser = {
-      id: "local-hunter",
-      name: legacyName,
-      loggedInAt: Date.now(),
-    };
-    saveAuthUser(user);
-    return user;
+  // Check fallback local/session name if already stored from previous session
+  try {
+    const legacyName =
+      window.localStorage.getItem(NAME_KEY) ||
+      window.sessionStorage.getItem(NAME_KEY);
+    if (legacyName) {
+      return {
+        id: "local-hunter",
+        name: legacyName,
+        loggedInAt: Date.now(),
+      };
+    }
+  } catch {
+    // ignore
   }
 
   return null;
 }
 
+/**
+ * Persists auth user and notifies other components.
+ */
 export function saveAuthUser(user: AuthUser): void {
   if (typeof window === "undefined") return;
   try {
@@ -100,20 +108,16 @@ export function isUserAuthenticated(): boolean {
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(() => getStoredAuthUser());
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
     function refresh() {
+      if (!isMounted) return;
       const u = getStoredAuthUser();
-      if (isMounted) {
-        setUser(u);
-        setIsLoading(false);
-      }
+      setUser(u);
     }
-
-    refresh();
 
     // Listen for storage / custom auth changes
     window.addEventListener("cursed-auth-change", refresh);
@@ -133,12 +137,10 @@ export function useAuth() {
             email: session.user.email,
             loggedInAt: Date.now(),
           };
-          saveAuthUser(authUser);
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser));
+          window.localStorage.setItem(NAME_KEY, authUser.name);
           setUser(authUser);
-        } else {
-          refresh();
         }
-        setIsLoading(false);
       });
 
       const {
@@ -155,13 +157,13 @@ export function useAuth() {
             email: session.user.email,
             loggedInAt: Date.now(),
           };
-          saveAuthUser(authUser);
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser));
+          window.localStorage.setItem(NAME_KEY, authUser.name);
           setUser(authUser);
         } else {
-          clearAuthUser();
+          window.localStorage.removeItem(STORAGE_KEY);
           setUser(null);
         }
-        setIsLoading(false);
       });
 
       return () => {
