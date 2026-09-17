@@ -14,6 +14,14 @@ const buttonVariants = cva(
           "rounded-sm border border-primary bg-primary text-primary-foreground shadow-[0_0_28px_var(--system-glow)] hover:bg-primary/85 hover:shadow-[0_0_38px_var(--system-glow-strong)]",
         systemOutline:
           "rounded-sm border border-primary/55 bg-primary/5 text-primary shadow-[inset_0_0_18px_var(--system-glow-soft)] hover:border-primary hover:bg-primary/12",
+        green:
+          "rounded-sm border border-emerald-600 bg-emerald-600 text-white shadow-[0_0_24px_rgba(16,185,129,0.25)] hover:bg-emerald-700 hover:shadow-[0_0_32px_rgba(16,185,129,0.4)] dark:border-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-600",
+        greenOutline:
+          "rounded-sm border border-emerald-600/60 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-500/50 dark:hover:bg-emerald-900/40",
+        orange:
+          "rounded-sm border border-orange-500 bg-orange-500 text-white shadow-[0_0_24px_rgba(249,115,22,0.25)] hover:bg-orange-600 hover:shadow-[0_0_32px_rgba(249,115,22,0.4)] dark:border-orange-500 dark:bg-orange-500 dark:hover:bg-orange-600",
+        orangeOutline:
+          "rounded-sm border border-orange-500/60 bg-orange-50 text-orange-700 hover:bg-orange-100 hover:border-orange-500 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-500/50 dark:hover:bg-orange-900/40",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",

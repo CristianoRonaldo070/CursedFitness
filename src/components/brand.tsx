@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Lock, LogOut, Menu, X } from "lucide-react";
+import { Lock, LogOut, Menu, Moon, Sun, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { useTheme } from "@/lib/theme";
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
@@ -23,6 +24,7 @@ export function BrandMark({ compact = false }: { compact?: boolean }) {
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   async function handleSignOut() {
     await signOut();
@@ -37,7 +39,7 @@ export function SiteHeader() {
   ] as const;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 lg:px-8">
         <BrandMark />
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
@@ -47,7 +49,7 @@ export function SiteHeader() {
               <Link
                 key={link.to}
                 to={destination}
-                activeProps={{ className: "text-primary" }}
+                activeProps={{ className: "text-primary font-bold" }}
                 className="flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
               >
                 {link.label}
@@ -59,9 +61,25 @@ export function SiteHeader() {
           })}
         </nav>
         <div className="hidden md:flex md:items-center md:gap-3">
+          {/* Theme Toggle */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleTheme}
+            className="size-9 rounded-sm border-border text-foreground hover:bg-muted"
+            aria-label="Toggle theme"
+            title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+          >
+            {theme === "light" ? (
+              <Moon className="size-4 text-foreground" />
+            ) : (
+              <Sun className="size-4 text-orange-400" />
+            )}
+          </Button>
+
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              <span className="font-mono text-xs text-primary">
+              <span className="font-mono text-xs text-primary font-semibold">
                 // {user?.name || "Hunter"}
               </span>
               <Button
@@ -74,20 +92,34 @@ export function SiteHeader() {
               </Button>
             </div>
           ) : (
-            <Button asChild variant="systemOutline" size="system">
+            <Button asChild variant="green" size="system">
               <Link to="/login">Enter system</Link>
             </Button>
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          aria-label="Toggle menu"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X /> : <Menu />}
-        </Button>
+        <div className="flex items-center gap-2 md:hidden">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleTheme}
+            className="size-9 rounded-sm border-border"
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? (
+              <Moon className="size-4 text-foreground" />
+            ) : (
+              <Sun className="size-4 text-orange-400" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X /> : <Menu />}
+          </Button>
+        </div>
       </div>
       {open && (
         <nav
@@ -126,7 +158,7 @@ export function SiteHeader() {
                 <LogOut className="mr-2 size-4" /> Disconnect ({user?.name || "Hunter"})
               </Button>
             ) : (
-              <Button asChild variant="system" size="system">
+              <Button asChild variant="green" size="system">
                 <Link to="/login" onClick={() => setOpen(false)}>
                   Enter system
                 </Link>

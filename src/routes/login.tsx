@@ -281,7 +281,7 @@ function LoginPage() {
 
             <Button
               type="submit"
-              variant="system"
+              variant={isSignUp ? "green" : "orange"}
               size="system"
               disabled={loading}
               className="w-full"

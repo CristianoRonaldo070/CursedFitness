@@ -153,7 +153,7 @@ function AssessmentPage() {
 
             <Button
               type="submit"
-              variant="system"
+              variant="green"
               size="system"
               disabled={loading}
               className="mt-9 w-full sm:w-auto"

@@ -182,7 +182,7 @@ function DashboardPage() {
               Age {p.age} · {p.weight} kg · {p.height} cm — {rec.protocolTitle}
             </p>
           </div>
-          <Button asChild variant="systemOutline" size="system">
+          <Button asChild variant="orangeOutline" size="system">
             <Link to="/assessment">Recalibrate stats</Link>
           </Button>
         </div>
@@ -302,7 +302,7 @@ function DashboardPage() {
                 </div>
                 <Button
                   onClick={handleMissionAction}
-                  variant={p.isMissionActive ? "default" : "system"}
+                  variant={p.isMissionActive ? "green" : completed.includes("workout") ? "orangeOutline" : "orange"}
                   size="system"
                   className="mt-7"
                 >
@@ -505,7 +505,7 @@ function DashboardPage() {
               </p>
 
               <div className="mt-4">
-                <Button asChild variant="system" size="sm" className="font-mono text-xs uppercase">
+                <Button asChild variant="green" size="sm" className="font-mono text-xs uppercase">
                   <Link to="/diet">
                     Open Diet Matrix & Alternatives <ArrowUpRight className="ml-1.5 size-3.5" />
                   </Link>

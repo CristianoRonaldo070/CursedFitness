@@ -54,12 +54,12 @@ export function AuthGuard({ children, moduleName = "System Module" }: AuthGuardP
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="system" size="system" className="min-w-[200px]">
+            <Button asChild variant="green" size="system" className="min-w-[200px]">
               <Link to="/login">
                 Sign In / Awaken <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
-            <Button asChild variant="systemOutline" size="system">
+            <Button asChild variant="orangeOutline" size="system">
               <Link to="/">Return to Home</Link>
             </Button>
           </div>

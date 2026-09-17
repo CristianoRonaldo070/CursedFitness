@@ -254,11 +254,11 @@ export function WarmupGate({ children, onWarmupComplete }: WarmupGateProps) {
                 <div className="mt-7">
                   <Button
                     onClick={startWarmupSession}
-                    variant="system"
+                    variant="orange"
                     size="system"
-                    className="w-full sm:w-auto px-8 py-6 text-base font-bold shadow-[0_0_25px_var(--system-glow)]"
+                    className="w-full sm:w-auto px-8 py-6 text-base font-bold shadow-[0_0_25px_rgba(249,115,22,0.3)]"
                   >
-                    <Flame className="mr-2 size-5 animate-pulse text-background" />
+                    <Flame className="mr-2 size-5 animate-pulse" />
                     Start Warm-Up Protocol
                     <ArrowRight className="ml-2 size-5" />
                   </Button>
@@ -351,7 +351,7 @@ export function WarmupGate({ children, onWarmupComplete }: WarmupGateProps) {
                 <div>
                   <Button
                     onClick={handleCompleteAndUnlock}
-                    variant="system"
+                    variant="green"
                     size="system"
                     className="w-full sm:w-auto px-10 text-base"
                   >
@@ -445,7 +445,7 @@ export function WarmupGate({ children, onWarmupComplete }: WarmupGateProps) {
 
                   <div className="flex gap-2">
                     <Button
-                      variant="system"
+                      variant="green"
                       size="sm"
                       onClick={handleNextExercise}
                       className="font-mono text-xs uppercase"
