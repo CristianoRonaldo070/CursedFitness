@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { defaultProfile, fetchProfile, saveProfile, type FitnessProfile } from "@/lib/profile";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { AuthGuard } from "@/components/auth-guard";
 
 export const Route = createFileRoute("/assessment")({
   head: () => ({
@@ -19,7 +20,11 @@ export const Route = createFileRoute("/assessment")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: AssessmentPage,
+  component: () => (
+    <AuthGuard moduleName="Body Assessment">
+      <AssessmentPage />
+    </AuthGuard>
+  ),
 });
 
 function AssessmentPage() {

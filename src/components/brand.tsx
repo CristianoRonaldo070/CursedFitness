@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { LogOut, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Lock, LogOut, Menu, X } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/auth";
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
@@ -22,70 +22,18 @@ export function BrandMark({ compact = false }: { compact?: boolean }) {
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const [hasUser, setHasUser] = useState(false);
-  const [userName, setUserName] = useState<string | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (typeof window !== "undefined") {
-      const storedName = window.sessionStorage.getItem("cursed-name");
-      if (storedName) {
-        setUserName(storedName);
-        setHasUser(true);
-      }
-    }
-
-    if (isSupabaseConfigured()) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (!isMounted) return;
-        if (session?.user) {
-          setHasUser(true);
-          const fullName =
-            session.user.user_metadata?.full_name || session.user.email?.split("@")[0];
-          if (fullName) setUserName(fullName);
-        }
-      });
-
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (!isMounted) return;
-        if (session?.user) {
-          setHasUser(true);
-          const fullName =
-            session.user.user_metadata?.full_name || session.user.email?.split("@")[0];
-          if (fullName) setUserName(fullName);
-        } else {
-          setHasUser(false);
-          setUserName(null);
-        }
-      });
-
-      return () => {
-        isMounted = false;
-        subscription.unsubscribe();
-      };
-    }
-  }, []);
+  const { user, isAuthenticated, signOut } = useAuth();
 
   async function handleSignOut() {
-    if (isSupabaseConfigured()) {
-      await supabase.auth.signOut();
-    }
-    if (typeof window !== "undefined") {
-      window.sessionStorage.removeItem("cursed-name");
-      window.sessionStorage.removeItem("cursed-profile");
-    }
-    setHasUser(false);
-    setUserName(null);
-    toast.info("Hunter link disconnected.");
+    await signOut();
+    toast.info("Hunter neural link disconnected.");
   }
 
   const links = [
-    { to: "/", label: "Home" },
-    { to: "/assessment", label: "Assessment" },
-    { to: "/dashboard", label: "System" },
-    { to: "/diet", label: "Diet" },
+    { to: "/", label: "Home", protected: false },
+    { to: "/assessment", label: "Assessment", protected: true },
+    { to: "/dashboard", label: "System", protected: true },
+    { to: "/diet", label: "Diet", protected: true },
   ] as const;
 
   return (
@@ -93,22 +41,28 @@ export function SiteHeader() {
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 lg:px-8">
         <BrandMark />
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
-          {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              activeProps={{ className: "text-primary" }}
-              className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {links.map((link) => {
+            const destination = link.protected && !isAuthenticated ? "/login" : link.to;
+            return (
+              <Link
+                key={link.to}
+                to={destination}
+                activeProps={{ className: "text-primary" }}
+                className="flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+                {link.protected && !isAuthenticated && (
+                  <Lock className="size-3 text-muted-foreground/70" />
+                )}
+              </Link>
+            );
+          })}
         </nav>
         <div className="hidden md:flex md:items-center md:gap-3">
-          {hasUser ? (
+          {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <span className="font-mono text-xs text-primary">
-                {userName ? `// ${userName}` : "// Authenticated"}
+                // {user?.name || "Hunter"}
               </span>
               <Button
                 variant="ghost"
@@ -141,17 +95,25 @@ export function SiteHeader() {
           aria-label="Mobile navigation"
         >
           <div className="flex flex-col gap-4">
-            {links.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setOpen(false)}
-                className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground"
-              >
-                {link.label}
-              </Link>
-            ))}
-            {hasUser ? (
+            {links.map((link) => {
+              const destination = link.protected && !isAuthenticated ? "/login" : link.to;
+              return (
+                <Link
+                  key={link.to}
+                  to={destination}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground"
+                >
+                  <span>{link.label}</span>
+                  {link.protected && !isAuthenticated && (
+                    <span className="flex items-center gap-1 font-mono text-[10px] text-muted-foreground/60">
+                      <Lock className="size-3" /> Sign in
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+            {isAuthenticated ? (
               <Button
                 variant="ghost"
                 size="system"
@@ -161,7 +123,7 @@ export function SiteHeader() {
                 }}
                 className="justify-start font-mono text-xs uppercase text-destructive"
               >
-                <LogOut className="mr-2 size-4" /> Disconnect ({userName || "Hunter"})
+                <LogOut className="mr-2 size-4" /> Disconnect ({user?.name || "Hunter"})
               </Button>
             ) : (
               <Button asChild variant="system" size="system">

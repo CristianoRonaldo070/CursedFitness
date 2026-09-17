@@ -1,12 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2, Shield, Sparkles } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BrandMark, SystemCore } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { fetchProfile, saveLocalProfile, getProfile } from "@/lib/profile";
+import {
+  saveAuthUser,
+  saveRememberedCredentials,
+  getRememberedCredentials,
+  useAuth,
+} from "@/lib/auth";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -24,6 +30,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [show, setShow] = useState(false);
   const [name, setName] = useState("");
@@ -33,18 +40,42 @@ function LoginPage() {
 
   const supabaseReady = isSupabaseConfigured();
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: "/dashboard" });
+      return;
+    }
+    const remembered = getRememberedCredentials();
+    if (remembered) {
+      if (remembered.email) setEmail(remembered.email);
+      if (remembered.name) setName(remembered.name);
+    } else {
+      const p = getProfile();
+      if (p.name && p.name !== "Hunter") {
+        setName(p.name);
+      }
+    }
+  }, [isAuthenticated, navigate]);
+
   async function submit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
 
     const cleanName = name.trim() || "Hunter";
-    if (typeof window !== "undefined") {
-      window.sessionStorage.setItem("cursed-name", cleanName);
-    }
+    const cleanEmail = email.trim();
+
+    // Remember credentials locally
+    saveRememberedCredentials({ email: cleanEmail, name: cleanName });
 
     if (!supabaseReady) {
       const current = getProfile();
       saveLocalProfile({ ...current, name: cleanName });
+      saveAuthUser({
+        id: "hunter-" + Date.now(),
+        name: cleanName,
+        email: cleanEmail || undefined,
+        loggedInAt: Date.now(),
+      });
       toast.success(isSignUp ? "Hunter registered in local system" : "System access granted");
       navigate({ to: isSignUp ? "/assessment" : "/dashboard" });
       setLoading(false);
@@ -54,7 +85,7 @@ function LoginPage() {
     try {
       if (isSignUp) {
         const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
+          email: cleanEmail,
           password,
           options: {
             data: { full_name: cleanName },
@@ -68,6 +99,12 @@ function LoginPage() {
         }
 
         if (data.user) {
+          saveAuthUser({
+            id: data.user.id,
+            name: cleanName,
+            email: cleanEmail,
+            loggedInAt: Date.now(),
+          });
           if (data.session) {
             toast.success("Awakening complete! Initializing assessment...");
             navigate({ to: "/assessment" });
@@ -78,7 +115,7 @@ function LoginPage() {
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
+          email: cleanEmail,
           password,
         });
 
@@ -89,6 +126,14 @@ function LoginPage() {
         }
 
         if (data.user) {
+          const resolvedName =
+            data.user.user_metadata?.full_name || cleanName || "Hunter";
+          saveAuthUser({
+            id: data.user.id,
+            name: resolvedName,
+            email: cleanEmail,
+            loggedInAt: Date.now(),
+          });
           toast.success("Neural link established. Welcome back, Hunter.");
           await fetchProfile();
           navigate({ to: "/dashboard" });

@@ -31,6 +31,7 @@ import {
   type DietType,
   type DishOption,
 } from "@/lib/diet-database";
+import { AuthGuard } from "@/components/auth-guard";
 
 export const Route = createFileRoute("/diet")({
   head: () => ({
@@ -49,7 +50,11 @@ export const Route = createFileRoute("/diet")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: DietPage,
+  component: () => (
+    <AuthGuard moduleName="Diet & Nutrition Matrix">
+      <DietPage />
+    </AuthGuard>
+  ),
 });
 
 export default function DietPage() {

@@ -30,6 +30,8 @@ import {
   type FitnessProfile,
 } from "@/lib/profile";
 import { getHunterRecommendations } from "@/lib/recommendations";
+import { AuthGuard } from "@/components/auth-guard";
+import { WarmupGate } from "@/components/warmup-gate";
 import trainingImage from "@/assets/cursed-training.jpg";
 
 export const Route = createFileRoute("/dashboard")({
@@ -49,7 +51,11 @@ export const Route = createFileRoute("/dashboard")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: DashboardPage,
+  component: () => (
+    <AuthGuard moduleName="Hunter System">
+      <DashboardPage />
+    </AuthGuard>
+  ),
 });
 
 const rankList = ["E", "D", "C", "B", "A", "S"];
@@ -144,6 +150,13 @@ function DashboardPage() {
           : "Mission Conquered! +240 XP awarded to your Hunter profile!"
       );
     }
+  }
+
+  async function handleWarmupComplete() {
+    const newXp = (p.xp ?? 340) + 50;
+    const updated = { ...p, xp: newXp };
+    setP(updated);
+    await saveProfile(updated);
   }
 
   const remainingCount = QUEST_DEFS.length - completed.length;
@@ -363,52 +376,56 @@ function DashboardPage() {
 
         {/* Focused Exercises Section */}
         <section className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="system-panel p-6 lg:col-span-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="system-label">
-                  {rec.isUnderweight ? "Mass Gain Hypertrophy Split" : "Training Protocol"}
-                </p>
-                <h2 className="mt-2 text-3xl font-bold uppercase">
-                  {rec.isUnderweight ? "Compound Mass Routine" : "Weekly Split"}
-                </h2>
-              </div>
-              <Dumbbell className="text-primary" />
-            </div>
-
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {rec.exercises.map((day) => (
-                <div key={day.day} className="border border-border bg-card p-4">
-                  <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                    <span className="font-mono text-xs font-bold text-primary">{day.day}</span>
-                    <span className="font-display text-xs uppercase tracking-wider text-muted-foreground">
-                      {day.focus}
-                    </span>
+          <div className="lg:col-span-2">
+            <WarmupGate onWarmupComplete={handleWarmupComplete}>
+              <div className="system-panel p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="system-label">
+                      {rec.isUnderweight ? "Mass Gain Hypertrophy Split" : "Training Protocol"}
+                    </p>
+                    <h2 className="mt-2 text-3xl font-bold uppercase">
+                      {rec.isUnderweight ? "Compound Mass Routine" : "Weekly Split"}
+                    </h2>
                   </div>
-                  <div className="mt-3 space-y-2.5">
-                    {day.lifts.map((lift) => (
-                      <div key={lift.name} className="flex justify-between items-start text-xs">
-                        <div>
-                          <p className="font-semibold text-foreground">{lift.name}</p>
-                          <p className="text-[10px] text-muted-foreground">{lift.note}</p>
-                        </div>
-                        <span className="font-mono text-[10px] text-primary whitespace-nowrap ml-2">
-                          {lift.setsReps}
+                  <Dumbbell className="text-primary" />
+                </div>
+
+                <div className="mt-6 grid gap-4 md:grid-cols-2">
+                  {rec.exercises.map((day) => (
+                    <div key={day.day} className="border border-border bg-card p-4">
+                      <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                        <span className="font-mono text-xs font-bold text-primary">{day.day}</span>
+                        <span className="font-display text-xs uppercase tracking-wider text-muted-foreground">
+                          {day.focus}
                         </span>
                       </div>
-                    ))}
-                  </div>
+                      <div className="mt-3 space-y-2.5">
+                        {day.lifts.map((lift) => (
+                          <div key={lift.name} className="flex justify-between items-start text-xs">
+                            <div>
+                              <p className="font-semibold text-foreground">{lift.name}</p>
+                              <p className="text-[10px] text-muted-foreground">{lift.note}</p>
+                            </div>
+                            <span className="font-mono text-[10px] text-primary whitespace-nowrap ml-2">
+                              {lift.setsReps}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {rec.isUnderweight && (
-              <div className="mt-4 border-t border-border/60 pt-3">
-                <p className="font-mono text-[10px] text-muted-foreground">
-                  // Note for low weight: Rest 90–120s between compound sets to lift heavier. Minimize high-intensity cardio to preserve surplus calories for muscle mass.
-                </p>
+                {rec.isUnderweight && (
+                  <div className="mt-4 border-t border-border/60 pt-3">
+                    <p className="font-mono text-[10px] text-muted-foreground">
+                      // Note for low weight: Rest 90–120s between compound sets to lift heavier. Minimize high-intensity cardio to preserve surplus calories for muscle mass.
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
+            </WarmupGate>
           </div>
 
           {/* Daily Quests */}
