@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
+import { useTheme } from "@/lib/theme";
 
 function NotFoundComponent() {
   return (
@@ -101,6 +102,11 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("cursed_theme")||"light";if(t==="dark"){document.documentElement.classList.add("dark");document.documentElement.classList.remove("light")}else{document.documentElement.classList.add("light");document.documentElement.classList.remove("dark")}}catch(e){document.documentElement.classList.add("light")}})();`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>
@@ -113,12 +119,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { theme } = useTheme();
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      <Toaster position="top-right" theme="dark" />
+      <Toaster position="top-right" theme={theme === "dark" ? "dark" : "light"} />
     </QueryClientProvider>
   );
 }
