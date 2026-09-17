@@ -32,7 +32,7 @@ import {
 import { getHunterRecommendations } from "@/lib/recommendations";
 import { AuthGuard } from "@/components/auth-guard";
 import { WarmupGate } from "@/components/warmup-gate";
-import trainingImage from "@/assets/cursed-training.jpg";
+import bodyImage from "@/assets/body.png";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -258,11 +258,9 @@ function DashboardPage() {
           <div className="system-panel overflow-hidden">
             <div className="relative min-h-[330px]">
               <img
-                src={trainingImage}
-                width={1536}
-                height={1024}
+                src={bodyImage}
                 alt="Strength training mission"
-                className="absolute inset-0 h-full w-full object-cover object-[62%_center] opacity-75"
+                className="absolute inset-0 h-full w-full object-cover object-[75%_25%] opacity-85"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
               <div className="relative max-w-lg p-7 md:p-10">
