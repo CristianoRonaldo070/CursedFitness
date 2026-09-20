@@ -32,6 +32,7 @@ import {
 import { getHunterRecommendations } from "@/lib/recommendations";
 import { AuthGuard } from "@/components/auth-guard";
 import { WarmupGate } from "@/components/warmup-gate";
+import { shouldDailyQuestsReset, markDailyQuestsCycle } from "@/lib/warmup";
 import bodyImage from "@/assets/body.png";
 
 export const Route = createFileRoute("/dashboard")({
@@ -83,12 +84,55 @@ function DashboardPage() {
     async function loadData() {
       const loaded = await fetchProfile();
       if (isMounted) {
-        setP(loaded);
+        if (
+          shouldDailyQuestsReset() &&
+          ((loaded.completedQuests && loaded.completedQuests.length > 0) || loaded.isMissionActive)
+        ) {
+          const resetProfile = {
+            ...loaded,
+            completedQuests: [],
+            isMissionActive: false,
+          };
+          setP(resetProfile);
+          await saveProfile(resetProfile);
+        } else {
+          setP(loaded);
+        }
       }
     }
     loadData();
     return () => {
       isMounted = false;
+    };
+  }, []);
+
+  // Synchronize daily quests reset with warm-up reset and 6:00 AM cycle
+  useEffect(() => {
+    function checkQuestsReset() {
+      if (shouldDailyQuestsReset()) {
+        setP((prev) => {
+          if ((prev.completedQuests && prev.completedQuests.length > 0) || prev.isMissionActive) {
+            const updated = {
+              ...prev,
+              completedQuests: [],
+              isMissionActive: false,
+            };
+            saveProfile(updated);
+            return updated;
+          }
+          return prev;
+        });
+      }
+    }
+
+    const interval = setInterval(checkQuestsReset, 15000);
+    window.addEventListener("cursed-warmup-change", checkQuestsReset);
+    window.addEventListener("cursed-quests-reset", checkQuestsReset);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("cursed-warmup-change", checkQuestsReset);
+      window.removeEventListener("cursed-quests-reset", checkQuestsReset);
     };
   }, []);
 
@@ -112,6 +156,7 @@ function DashboardPage() {
     } else {
       newCompleted = [...completed, questId];
       newXp = currentXp + questXp;
+      markDailyQuestsCycle();
       toast.success(`Quest Cleared: "${questTitle}"! +${questXp} XP gained.`);
     }
 
@@ -144,6 +189,7 @@ function DashboardPage() {
       };
       setP(updated);
       await saveProfile(updated);
+      markDailyQuestsCycle();
       toast.success(
         alreadyHasWorkout
           ? "Mission marked complete!"
@@ -157,6 +203,7 @@ function DashboardPage() {
     const updated = { ...p, xp: newXp };
     setP(updated);
     await saveProfile(updated);
+    markDailyQuestsCycle();
   }
 
   const remainingCount = QUEST_DEFS.length - completed.length;
@@ -430,7 +477,10 @@ function DashboardPage() {
           <div className="system-panel p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="system-label">Daily quests</p>
+                <div className="flex items-center gap-2">
+                  <p className="system-label">Daily quests</p>
+                  <span className="font-mono text-[9px] text-muted-foreground">// Resets 06:00 AM</span>
+                </div>
                 <h2 className="mt-2 text-3xl font-bold uppercase">
                   {remainingCount === 0 ? "All cleared!" : `${remainingCount} remaining`}
                 </h2>

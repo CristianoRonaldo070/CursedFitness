@@ -129,14 +129,63 @@ export function setWarmupCompleted(): void {
   }
 }
 
+export const QUESTS_STORAGE_KEY = "cursed_daily_quests_cycle";
+
 /**
- * Clears warm-up completion state (resets back to locked).
+ * Checks whether the daily quests need to be reset for the current 6:00 AM cycle,
+ * or because today's warm-up is not completed yet.
+ */
+export function shouldDailyQuestsReset(): boolean {
+  if (typeof window === "undefined") return false;
+  // If warmup is not completed for today's cycle, daily quests must also be reset
+  if (!isWarmupCompletedToday()) {
+    return true;
+  }
+  try {
+    const raw = window.localStorage.getItem(QUESTS_STORAGE_KEY);
+    if (!raw) return true;
+    const cycle = parseInt(raw, 10);
+    return isNaN(cycle) || cycle < getCurrentCycleStart();
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Marks daily quests as active for the current cycle.
+ */
+export function markDailyQuestsCycle(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(QUESTS_STORAGE_KEY, String(getCurrentCycleStart()));
+  } catch (err) {
+    console.warn("Failed to set quests cycle:", err);
+  }
+}
+
+/**
+ * Clears the daily quests cycle (forcing a reset).
+ */
+export function resetDailyQuestsCycle(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(QUESTS_STORAGE_KEY);
+    window.dispatchEvent(new Event("cursed-quests-reset"));
+  } catch (err) {
+    console.warn("Failed to clear quests cycle:", err);
+  }
+}
+
+/**
+ * Clears warm-up completion state (resets back to locked) and daily quests.
  */
 export function resetWarmup(): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.removeItem(WARMUP_STORAGE_KEY);
+    window.localStorage.removeItem(QUESTS_STORAGE_KEY);
     window.dispatchEvent(new Event("cursed-warmup-change"));
+    window.dispatchEvent(new Event("cursed-quests-reset"));
   } catch (err) {
     console.warn("Failed to reset warmup:", err);
   }
