@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
   <title>CursedFitness</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,6 +16,13 @@
       background-color: #07111e;
       color: #f1f5f9;
       -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+    /* Critical: Ensure text inputs are always selectable and typable */
+    input, textarea, select, [contenteditable] {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      pointer-events: auto !important;
     }
   </style>
 </head>

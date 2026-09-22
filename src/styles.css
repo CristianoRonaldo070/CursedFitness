@@ -226,7 +226,25 @@
 .mobile-shell {
   /* Ensure inputs and buttons are fully interactive */
   input, textarea, select {
-    font-size: 16px; /* prevents unwanted zoom on focus */
+    font-size: 16px !important; /* prevents iOS/Android unwanted zoom on focus */
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    color: inherit !important;
+    background-color: var(--color-card) !important;
+    caret-color: var(--color-primary) !important;
+    z-index: 1;
+    position: relative;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    outline: 2px solid var(--color-ring) !important;
+    outline-offset: -1px;
+    z-index: 10;
   }
 
   a, button, [role="button"], label {

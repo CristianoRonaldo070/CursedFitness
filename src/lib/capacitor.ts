@@ -24,10 +24,13 @@ export async function initCapacitor(): Promise<void> {
 
     // Handle Android hardware back button cleanly
     App.addListener("backButton", ({ canGoBack }) => {
-      // If keyboard or an input is active, simply blur it to dismiss the keyboard without navigating
+      // If an input is focused, dismiss keyboard gracefully without navigating
       const active = document.activeElement as HTMLElement | null;
       if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) {
-        active.blur();
+        // Use requestAnimationFrame to avoid layout thrashing
+        requestAnimationFrame(() => {
+          active.blur();
+        });
         return;
       }
 
