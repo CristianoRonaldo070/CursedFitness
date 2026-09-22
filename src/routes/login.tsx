@@ -134,7 +134,9 @@ function LoginPage() {
 
         if (data.user) {
           const resolvedName =
-            data.user.user_metadata?.full_name || cleanName || "Hunter";
+            (data.user.user_metadata?.["full_name"] as string | undefined) ||
+            cleanName ||
+            "Hunter";
           saveAuthUser({
             id: data.user.id,
             name: resolvedName,

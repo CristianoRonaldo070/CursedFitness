@@ -4,8 +4,8 @@ import { isSupabaseConfigured, supabase } from "./supabase";
 export interface AuthUser {
   id: string;
   name: string;
-  email?: string;
-  avatarUrl?: string;
+  email?: string | undefined;
+  avatarUrl?: string | undefined;
   loggedInAt: number;
 }
 
@@ -115,7 +115,7 @@ export function useAuth() {
           const authUser: AuthUser = {
             id: session.user.id,
             name:
-              session.user.user_metadata?.full_name ||
+              (session.user.user_metadata?.["full_name"] as string | undefined) ||
               session.user.email?.split("@")[0] ||
               "Hunter",
             email: session.user.email,
@@ -135,7 +135,7 @@ export function useAuth() {
           const authUser: AuthUser = {
             id: session.user.id,
             name:
-              session.user.user_metadata?.full_name ||
+              (session.user.user_metadata?.["full_name"] as string | undefined) ||
               session.user.email?.split("@")[0] ||
               "Hunter",
             email: session.user.email,
