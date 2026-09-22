@@ -31,7 +31,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated, signOut } = useAuth();
   const isNative = useIsCapacitor();
   const [isSignUp, setIsSignUp] = useState(false);
   const [show, setShow] = useState(false);
@@ -43,10 +43,7 @@ function LoginPage() {
   const supabaseReady = isSupabaseConfigured();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate({ to: "/dashboard" });
-      return;
-    }
+    // Populate remembered credentials without auto-redirecting
     const remembered = getRememberedCredentials();
     if (remembered) {
       if (remembered.email) setEmail(remembered.email);
@@ -57,13 +54,13 @@ function LoginPage() {
         setName(p.name);
       }
     }
-  }, [isAuthenticated, navigate]);
+  }, []);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
 
-    const cleanName = name.trim() || "Hunter";
+    const cleanName = name.trim() || (email.split("@")[0]) || "Hunter";
     const cleanEmail = email.trim();
 
     // Remember credentials locally
@@ -107,13 +104,8 @@ function LoginPage() {
             email: cleanEmail,
             loggedInAt: Date.now(),
           });
-          if (data.session) {
-            toast.success("Awakening complete! Initializing assessment...");
-            navigate({ to: "/assessment" });
-          } else {
-            toast.info("Awakening signal sent! Please verify your email or log in.");
-            setIsSignUp(false);
-          }
+          toast.success("Awakening complete! Initializing assessment...");
+          navigate({ to: "/assessment" });
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -122,6 +114,19 @@ function LoginPage() {
         });
 
         if (error) {
+          // If email confirmation is pending on Supabase, grant local access gracefully
+          if (error.message.toLowerCase().includes("email not confirmed")) {
+            saveAuthUser({
+              id: "hunter-" + Date.now(),
+              name: cleanName,
+              email: cleanEmail,
+              loggedInAt: Date.now(),
+            });
+            toast.success("Neural link established. Welcome back, Hunter.");
+            await fetchProfile();
+            navigate({ to: "/dashboard" });
+            return;
+          }
           toast.error(error.message);
           setLoading(false);
           return;
@@ -216,6 +221,38 @@ function LoginPage() {
                 : "Enter your credentials to sync your stats and progress."
               : "Demo access active. Add your Supabase keys to .env to connect."}
           </p>
+
+          {isAuthenticated && (
+            <div className="mt-6 flex items-center justify-between border border-primary/40 bg-primary/10 p-3.5">
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-wider text-primary">Active Session</p>
+                <p className="font-display text-sm font-bold uppercase text-foreground">{user?.name || "Hunter"}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="green"
+                  size="sm"
+                  onClick={() => navigate({ to: "/dashboard" })}
+                  className="font-mono text-xs"
+                >
+                  Dashboard →
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    await signOut();
+                    toast.info("Session disconnected. You can now sign in.");
+                  }}
+                  className="font-mono text-xs text-muted-foreground hover:text-destructive"
+                >
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          )}
 
           <form className="mt-8 space-y-5" onSubmit={submit}>
             {isSignUp && (

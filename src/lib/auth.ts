@@ -27,22 +27,6 @@ export function getStoredAuthUser(): AuthUser | null {
     // fallback
   }
 
-  // Check fallback local/session name if already stored from previous session
-  try {
-    const legacyName =
-      window.localStorage.getItem(NAME_KEY) ||
-      window.sessionStorage.getItem(NAME_KEY);
-    if (legacyName) {
-      return {
-        id: "local-hunter",
-        name: legacyName,
-        loggedInAt: Date.now(),
-      };
-    }
-  } catch {
-    // ignore
-  }
-
   return null;
 }
 
@@ -145,7 +129,7 @@ export function useAuth() {
 
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
+      } = supabase.auth.onAuthStateChange((event, session) => {
         if (!isMounted) return;
         if (session?.user) {
           const authUser: AuthUser = {
@@ -160,7 +144,7 @@ export function useAuth() {
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser));
           window.localStorage.setItem(NAME_KEY, authUser.name);
           setUser(authUser);
-        } else {
+        } else if (event === "SIGNED_OUT") {
           window.localStorage.removeItem(STORAGE_KEY);
           setUser(null);
         }
