@@ -20,7 +20,7 @@ const config: CapacitorConfig = {
   android: {
     backgroundColor: "#0a0e1a",
     allowMixedContent: true,
-    captureInput: true,
+    captureInput: false,
     webContentsDebuggingEnabled: true,
   },
   // The SSR app is loaded from the deployed server URL.
