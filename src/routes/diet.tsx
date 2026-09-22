@@ -32,6 +32,7 @@ import {
   type DishOption,
 } from "@/lib/diet-database";
 import { AuthGuard } from "@/components/auth-guard";
+import { useIsCapacitor } from "@/hooks/use-capacitor";
 
 export const Route = createFileRoute("/diet")({
   head: () => ({
@@ -60,6 +61,7 @@ export const Route = createFileRoute("/diet")({
 export default function DietPage() {
   const [profile, setProfile] = useState<FitnessProfile>(defaultProfile);
   const [activeDietFilter, setActiveDietFilter] = useState<DietType>("all");
+  const isNative = useIsCapacitor();
 
   // Selected dishes state per category: { breakfast: 'id', lunch: 'id', shake: 'id', dinner: 'id' }
   const [selectedDishes, setSelectedDishes] = useState<Record<string, string>>({});
@@ -155,7 +157,7 @@ export default function DietPage() {
   const proteinDiff = totalProtein - rec.proteinGrams;
 
   return (
-    <main className="min-h-screen pt-18 pb-20">
+    <main className={`min-h-screen ${isNative ? "pt-4 pb-24" : "pt-18 pb-20"}`}>
       <SiteHeader />
       <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
         {/* Top Header */}

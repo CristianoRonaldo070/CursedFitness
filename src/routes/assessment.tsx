@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { defaultProfile, fetchProfile, saveProfile, type FitnessProfile } from "@/lib/profile";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { AuthGuard } from "@/components/auth-guard";
+import { useIsCapacitor } from "@/hooks/use-capacitor";
 
 export const Route = createFileRoute("/assessment")({
   head: () => ({
@@ -62,9 +63,10 @@ function AssessmentPage() {
   }
 
   const bmi = profile.height > 0 ? profile.weight / Math.pow(profile.height / 100, 2) : 22;
+  const isNative = useIsCapacitor();
 
   return (
-    <main className="min-h-screen pt-18">
+    <main className={`min-h-screen ${isNative ? "pt-4 pb-24" : "pt-18"}`}>
       <SiteHeader />
       <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
         <div className="flex flex-col justify-between gap-6 border-b border-border pb-8 md:flex-row md:items-end">

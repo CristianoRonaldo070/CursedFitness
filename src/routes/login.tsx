@@ -13,6 +13,7 @@ import {
   getRememberedCredentials,
   useAuth,
 } from "@/lib/auth";
+import { useIsCapacitor } from "@/hooks/use-capacitor";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const isNative = useIsCapacitor();
   const [isSignUp, setIsSignUp] = useState(false);
   const [show, setShow] = useState(false);
   const [name, setName] = useState("");
@@ -148,7 +150,7 @@ function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
+    <main className={`grid min-h-screen ${isNative ? "" : "lg:grid-cols-[1.05fr_.95fr]"}`}>
       <section className="relative hidden overflow-hidden border-r border-border bg-card lg:flex lg:flex-col lg:justify-between lg:p-10">
         <BrandMark />
         <div className="absolute inset-16">

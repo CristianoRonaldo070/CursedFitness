@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ChevronRight, Crosshair, Dumbbell, ShieldCheck, Utensils } from "lucide-react";
+import { ArrowRight, ChevronRight, Crosshair, Download, Dumbbell, ShieldCheck, Smartphone, Utensils, Wifi, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteHeader, SystemCore } from "@/components/brand";
+import { MobileAppPreview } from "@/components/mobile-shell";
 import athleteImage from "@/assets/cursed-athlete.jpg";
 import trainingImage from "@/assets/cursed-training.jpg";
 
@@ -50,6 +51,57 @@ function HomePage() {
     <section className="py-24"><div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2 lg:items-center lg:px-8"><div className="relative min-h-[520px] overflow-hidden border border-border"><img src={trainingImage} loading="lazy" width={1536} height={1024} alt="Athlete completing a strength mission" className="absolute inset-0 h-full w-full object-cover object-[62%_center]"/><div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"/><div className="system-panel absolute bottom-5 left-5 right-5 p-5"><div className="flex items-center justify-between"><span className="system-label">Daily mission</span><span className="font-mono text-xs text-success">+240 XP</span></div><p className="mt-3 font-display text-3xl font-bold uppercase">Strength of the awakened</p><div className="mt-4 h-1 bg-muted"><div className="h-full w-3/4 bg-primary shadow-[0_0_14px_var(--system-glow)]"/></div></div></div>
       <div><p className="system-label">Ascension path</p><h2 className="mt-4 text-5xl font-black uppercase leading-none md:text-7xl">Every rep<br/>earns power.</h2><p className="mt-6 max-w-lg leading-7 text-muted-foreground">Your rank is more than a badge. It records consistency, strength gains and missions conquered.</p><div className="mt-10 flex items-center gap-2">{ranks.map((rank,i)=><div key={rank} className={`grid size-11 place-items-center border font-display text-xl font-black ${i===0 ? "border-primary bg-primary text-primary-foreground shadow-[0_0_24px_var(--system-glow)]" : "border-border bg-card text-muted-foreground"}`}>{rank}</div>)}</div><Button asChild variant="green" size="system" className="mt-9"><Link to="/assessment">Start assessment <ChevronRight/></Link></Button></div></div></section>
 
+    {/* ───────── Download App Section ───────── */}
+    <section className="border-t border-border py-24">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="grid gap-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+          {/* Left — Content */}
+          <div>
+            <div className="system-label mb-4 flex items-center gap-3">
+              <span className="h-px w-10 bg-primary" />
+              Mobile deployment // Android
+            </div>
+            <h2 className="text-5xl font-black uppercase leading-none md:text-7xl">
+              Take the system
+              <br />
+              <span className="text-primary text-glow">everywhere.</span>
+            </h2>
+            <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground md:text-lg">
+              Install the CursedFitness Android app for a native mobile experience. Same database, same progress — optimized for your phone with bottom navigation, offline support, and instant access.
+            </p>
+
+            <div className="mt-8 grid max-w-md grid-cols-2 gap-4">
+              <AppFeature icon={<Smartphone />} title="Native Feel" desc="Bottom tab bar, swipe gestures, splash screen" />
+              <AppFeature icon={<Wifi />} title="Cloud Synced" desc="Same Supabase database as the website" />
+              <AppFeature icon={<Zap />} title="Instant Launch" desc="No browser needed — opens like any app" />
+              <AppFeature icon={<ShieldCheck />} title="Secure Auth" desc="Your hunter credentials stay encrypted" />
+            </div>
+
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Button asChild variant="green" size="system">
+                <a href="/cursed-fitness.apk" download="CursedFitness.apk">
+                  <Download className="mr-2 size-4" />
+                  Download APK
+                </a>
+              </Button>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                Android 8.0+ · ~15 MB
+              </span>
+            </div>
+
+            <p className="mt-4 font-mono text-[10px] leading-5 text-muted-foreground/70">
+              // Note: Enable "Install from unknown sources" in your Android settings to install the APK.
+            </p>
+          </div>
+
+          {/* Right — Phone Mockup */}
+          <div className="hidden lg:flex lg:justify-center">
+            <MobileAppPreview />
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section className="border-t border-border px-5 py-24 text-center"><div className="mx-auto max-w-3xl"><Utensils className="mx-auto size-9 text-primary"/><p className="system-label mt-6">Your evolution begins now</p><h2 className="mt-4 text-5xl font-black uppercase md:text-7xl">Accept the quest?</h2><p className="mx-auto mt-5 max-w-xl text-muted-foreground">Enter your stats. Get your protocol. Become unrecognizable.</p><Button asChild variant="orange" size="system" className="mt-8"><Link to="/login">Enter the system <ArrowRight/></Link></Button></div></section>
     <footer className="border-t border-border px-5 py-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 text-center font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground sm:flex-row"><span>© 2026 CursedFitness</span><span>Frontend concept // No data stored</span></div></footer>
   </main>;
@@ -57,3 +109,16 @@ function HomePage() {
 
 function Stat({ value, label }: { value:string; label:string }) { return <div className="bg-background/80 px-4 py-4"><p className="font-display text-2xl font-bold text-foreground">{value}</p><p className="system-label mt-1 text-[9px]">{label}</p></div> }
 function Feature({icon,n,title,text}:{icon:React.ReactNode;n:string;title:string;text:string}) { return <article className="bg-background p-7 lg:p-9"><div className="flex items-center justify-between text-primary">{icon}<span className="font-mono text-xs text-muted-foreground">{n}</span></div><h3 className="mt-9 text-3xl font-bold uppercase">{title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{text}</p></article> }
+function AppFeature({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="grid size-9 shrink-0 place-items-center border border-primary/40 bg-primary/10 text-primary">
+        {icon}
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-foreground">{title}</p>
+        <p className="mt-0.5 text-[11px] leading-4 text-muted-foreground">{desc}</p>
+      </div>
+    </div>
+  );
+}

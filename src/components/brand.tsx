@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
+import { useIsCapacitor } from "@/hooks/use-capacitor";
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
@@ -25,6 +26,10 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const isNative = useIsCapacitor();
+
+  // In the native Android app, we use the bottom tab bar instead
+  if (isNative) return null;
 
   async function handleSignOut() {
     await signOut();

@@ -17,6 +17,12 @@ dist-ssr
 *.local
 .env
 
+# Capacitor / Android build outputs
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

@@ -7,7 +7,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+
+import { MobileShell } from "@/components/mobile-shell";
+import { initCapacitor } from "@/lib/capacitor";
 
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
@@ -120,11 +123,21 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { theme } = useTheme();
+  const capInitRef = useRef(false);
+
+  useEffect(() => {
+    if (!capInitRef.current) {
+      capInitRef.current = true;
+      initCapacitor();
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <MobileShell>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </MobileShell>
       <Toaster position="top-right" theme={theme === "dark" ? "dark" : "light"} />
     </QueryClientProvider>
   );

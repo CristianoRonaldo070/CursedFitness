@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>CursedFitness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; background: #0a0e1a; font-family: 'Manrope', sans-serif; }
+
+    .splash {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #0a0e1a;
+      transition: opacity 0.4s ease;
+    }
+    .splash.hidden { opacity: 0; pointer-events: none; }
+
+    .splash-logo {
+      width: 72px; height: 72px;
+      display: grid; place-items: center;
+      border: 2px solid rgba(60, 180, 90, 0.6);
+      background: rgba(60, 180, 90, 0.1);
+      clip-path: polygon(50% 0, 100% 22%, 86% 86%, 50% 100%, 14% 86%, 0 22%);
+      box-shadow: 0 0 40px rgba(60, 180, 90, 0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .splash-logo span {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 36px; font-weight: 900; color: #3cb45a;
+    }
+    .splash-text {
+      margin-top: 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: #e8e8e8;
+    }
+    .splash-text span { color: #3cb45a; }
+    .splash-sub {
+      margin-top: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: #555;
+    }
+    .splash-bar {
+      margin-top: 32px; width: 160px; height: 3px;
+      background: rgba(255,255,255,0.08); overflow: hidden;
+    }
+    .splash-bar-fill {
+      height: 100%; width: 0; background: #3cb45a;
+      box-shadow: 0 0 12px rgba(60, 180, 90, 0.5);
+      animation: loading 2s ease-in-out forwards;
+    }
+
+    @keyframes pulse { 50% { transform: scale(1.06); opacity: 0.8; } }
+    @keyframes loading { to { width: 100%; } }
+  </style>
+</head>
+<body>
+  <!-- Splash screen shown while loading -->
+  <div class="splash" id="splash">
+    <div class="splash-logo"><span>C</span></div>
+    <div class="splash-text">Cursed<span>Fitness</span></div>
+    <div class="splash-sub">Initializing system...</div>
+    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  </div>
+
+  <!-- This script loads the Capacitor bridge & redirects to the live app -->
+  <script>
+    // Wait for splash animation, then redirect to live app URL
+    window.addEventListener('DOMContentLoaded', function() {
+      // Determine the app URL — update this with your deployed website URL
+      var APP_URL = localStorage.getItem('cursed_app_url') || window.location.origin;
+
+      // Give splash 2 seconds, then navigate
+      setTimeout(function() {
+        document.getElementById('splash').classList.add('hidden');
+        setTimeout(function() {
+          window.location.href = APP_URL;
+        }, 400);
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

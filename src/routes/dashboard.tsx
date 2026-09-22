@@ -33,6 +33,7 @@ import { getHunterRecommendations } from "@/lib/recommendations";
 import { AuthGuard } from "@/components/auth-guard";
 import { WarmupGate } from "@/components/warmup-gate";
 import { shouldDailyQuestsReset, markDailyQuestsCycle } from "@/lib/warmup";
+import { useIsCapacitor } from "@/hooks/use-capacitor";
 import bodyImage from "@/assets/body.png";
 
 export const Route = createFileRoute("/dashboard")({
@@ -78,6 +79,7 @@ function getRank(xp: number): { rank: string; nextRank: string; currentTierXp: n
 
 function DashboardPage() {
   const [p, setP] = useState<FitnessProfile>(defaultProfile);
+  const isNative = useIsCapacitor();
 
   useEffect(() => {
     let isMounted = true;
@@ -209,7 +211,7 @@ function DashboardPage() {
   const remainingCount = QUEST_DEFS.length - completed.length;
 
   return (
-    <main className="min-h-screen pt-18">
+    <main className={`min-h-screen ${isNative ? "pt-4 pb-24" : "pt-18"}`}>
       <SiteHeader />
       <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
         <div className="flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
