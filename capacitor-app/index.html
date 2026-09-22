@@ -17,11 +17,21 @@
       color: #f1f5f9;
       overscroll-behavior-y: none;
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
+      touch-action: manipulation;
+    }
+    /* Allow text selection & input in form fields */
+    input, textarea, select, [contenteditable] {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    /* Make all buttons/links tappable */
+    a, button, [role="button"], label {
+      cursor: pointer;
+      touch-action: manipulation;
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-CsAeaLBa.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/styles-FupcgPvo.css">
+  <script type="module" crossorigin src="/assets/index-BqnO2tKv.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/styles-C24b1Ill.css">
 </head>
 <body class="bg-background text-foreground selection:bg-primary/20 selection:text-primary min-h-screen antialiased">
   <div id="root"></div>

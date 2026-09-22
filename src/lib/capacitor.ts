@@ -17,10 +17,10 @@ export async function initCapacitor(): Promise<void> {
     await StatusBar.setStyle({ style: Style.Dark });
     await StatusBar.setBackgroundColor({ color: "#0a0e1a" });
 
-    // Hide splash after 1.5 s
+    // Hide splash quickly — 500 ms is enough for the WebView to render
     setTimeout(() => {
-      SplashScreen.hide({ fadeOutDuration: 300 });
-    }, 1500);
+      SplashScreen.hide({ fadeOutDuration: 200 });
+    }, 500);
 
     // Handle Android hardware back button
     App.addListener("backButton", ({ canGoBack }) => {

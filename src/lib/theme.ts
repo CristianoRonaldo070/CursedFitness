@@ -6,6 +6,10 @@ const THEME_STORAGE_KEY = "cursed_theme";
 
 export function getStoredTheme(): Theme {
   if (typeof window === "undefined") return "light";
+  // Native Android app is always dark themed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isNative = (window as any).Capacitor?.isNativePlatform?.() === true;
+  if (isNative) return "dark";
   try {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
     if (stored === "light" || stored === "dark") {

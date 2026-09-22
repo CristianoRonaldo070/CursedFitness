@@ -219,3 +219,81 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* ───── Mobile / Capacitor WebView overrides ───── */
+
+/* Scope mobile fixes to when the native shell wrapper is present */
+.mobile-shell {
+  /* Ensure inputs and buttons are fully interactive */
+  input, textarea, select {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    touch-action: auto !important;
+    pointer-events: auto !important;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 16px; /* prevents iOS/Android zoom on focus */
+  }
+
+  a, button, [role="button"], label {
+    pointer-events: auto !important;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  /* Fix images stretching – force aspect-ratio preservation */
+  img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Improve section padding on small screens */
+  section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Improve hero section and image containers on mobile */
+  section:first-of-type {
+    min-height: auto;
+    padding-top: 3.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .relative.overflow-hidden {
+    min-height: 260px;
+  }
+
+  /* Improve stat grid readability */
+  .grid-cols-3 {
+    gap: 1px;
+  }
+
+  /* Better card padding on mobile */
+  .system-panel {
+    padding: 1rem;
+  }
+
+  /* Improve text sizing for mobile readability */
+  h1 {
+    font-size: clamp(3rem, 9vw, 6rem) !important;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 7vw, 4rem) !important;
+  }
+
+  /* Bottom bar safe area */
+  .pb-20 {
+    padding-bottom: 5.5rem;
+  }
+}
+
+/* Improve dark theme contrast specifically for mobile readability */
+.dark .mobile-shell {
+  --muted-foreground: oklch(0.75 0.03 250);
+  --border: oklch(0.28 0.05 251 / 85%);
+  --input: oklch(0.22 0.04 254);
+  --card: oklch(0.12 0.022 258);
+}

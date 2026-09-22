@@ -17,7 +17,17 @@
       color: #f1f5f9;
       overscroll-behavior-y: none;
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
+      touch-action: manipulation;
+    }
+    /* Allow text selection & input in form fields */
+    input, textarea, select, [contenteditable] {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    /* Make all buttons/links tappable */
+    a, button, [role="button"], label {
+      cursor: pointer;
+      touch-action: manipulation;
     }
   </style>
 </head>
