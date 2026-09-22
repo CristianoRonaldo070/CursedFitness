@@ -45,7 +45,7 @@ async function main() {
   };
 
   const androidDir = path.join(ROOT, 'android');
-  run('.\\gradlew.bat assembleDebug', androidDir, gradleEnv);
+  run('.\\gradlew.bat clean assembleDebug', androidDir, gradleEnv);
 
   console.log('\n=== Step 5: Updating Website Downloadable APK ===');
   const builtApk = path.join(androidDir, 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk');

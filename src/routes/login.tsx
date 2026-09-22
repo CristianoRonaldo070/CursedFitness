@@ -258,9 +258,10 @@ function LoginPage() {
 
           <form className="mt-8 space-y-5" onSubmit={submit}>
             {isSignUp && (
-              <label className="block">
-                <span className="system-label text-[9px]">Hunter name / Call-sign</span>
+              <div className="space-y-1.5">
+                <label htmlFor="hunter-name-field" className="system-label block text-[9px]">Hunter name / Call-sign</label>
                 <Input
+                  id="hunter-name-field"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onInput={(e) => setName((e.target as HTMLInputElement).value)}
@@ -270,15 +271,16 @@ function LoginPage() {
                   autoCorrect="off"
                   spellCheck={false}
                   placeholder="Enter your hunter name (e.g. Jin-Woo)"
-                  className="mt-2 h-12 rounded-sm border-border bg-card px-4 text-foreground"
+                  className="h-12 rounded-sm border-border bg-card px-4 text-foreground"
                 />
-              </label>
+              </div>
             )}
 
             {supabaseReady ? (
-              <label className="block">
-                <span className="system-label text-[9px]">Hunter Email</span>
+              <div className="space-y-1.5">
+                <label htmlFor="hunter-email-field" className="system-label block text-[9px]">Hunter Email</label>
                 <Input
+                  id="hunter-email-field"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -289,13 +291,14 @@ function LoginPage() {
                   autoCorrect="off"
                   spellCheck={false}
                   placeholder="hunter@system.domain"
-                  className="mt-2 h-12 rounded-sm border-border bg-card px-4 text-foreground"
+                  className="h-12 rounded-sm border-border bg-card px-4 text-foreground"
                 />
-              </label>
+              </div>
             ) : !isSignUp ? (
-              <label className="block">
-                <span className="system-label text-[9px]">Hunter name</span>
+              <div className="space-y-1.5">
+                <label htmlFor="hunter-name-demo-field" className="system-label block text-[9px]">Hunter name</label>
                 <Input
+                  id="hunter-name-demo-field"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onInput={(e) => setName((e.target as HTMLInputElement).value)}
@@ -305,15 +308,16 @@ function LoginPage() {
                   autoCorrect="off"
                   spellCheck={false}
                   placeholder="Enter your name"
-                  className="mt-2 h-12 rounded-sm border-border bg-card px-4 text-foreground"
+                  className="h-12 rounded-sm border-border bg-card px-4 text-foreground"
                 />
-              </label>
+              </div>
             ) : null}
 
-            <label className="block">
-              <span className="system-label text-[9px]">Access key</span>
-              <span className="relative mt-2 block">
+            <div className="space-y-1.5">
+              <label htmlFor="hunter-password-field" className="system-label block text-[9px]">Access key</label>
+              <div className="relative">
                 <Input
+                  id="hunter-password-field"
                   type={show ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -337,8 +341,8 @@ function LoginPage() {
                 >
                   {show ? <EyeOff /> : <Eye />}
                 </Button>
-              </span>
-            </label>
+              </div>
+            </div>
 
             <Button
               type="submit"
