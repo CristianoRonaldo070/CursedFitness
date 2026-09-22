@@ -22,9 +22,18 @@ export async function initCapacitor(): Promise<void> {
       SplashScreen.hide({ fadeOutDuration: 200 });
     }, 500);
 
-    // Handle Android hardware back button
+    // Handle Android hardware back button cleanly
     App.addListener("backButton", ({ canGoBack }) => {
-      if (canGoBack) {
+      // If keyboard or an input is active, simply blur it to dismiss the keyboard without navigating
+      const active = document.activeElement as HTMLElement | null;
+      if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) {
+        active.blur();
+        return;
+      }
+
+      // Only navigate back if we're on a sub-route, otherwise exit gracefully
+      const hash = window.location.hash || "";
+      if (hash && hash !== "#/" && hash !== "#" && canGoBack) {
         window.history.back();
       } else {
         App.exitApp();

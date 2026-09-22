@@ -9,8 +9,8 @@ const config: CapacitorConfig = {
       launchAutoHide: false,
       backgroundColor: "#0a0e1a",
       showSpinner: false,
-      splashFullScreen: true,
-      splashImmersive: true,
+      splashFullScreen: false,
+      splashImmersive: false,
     },
     StatusBar: {
       style: "DARK",

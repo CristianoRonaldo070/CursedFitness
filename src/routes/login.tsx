@@ -171,7 +171,7 @@ function LoginPage() {
         </div>
       </section>
 
-      <section className="flex min-h-screen items-center px-5 py-16 sm:px-10">
+      <section className={`flex px-5 sm:px-10 ${isNative ? "min-h-[100dvh] flex-col justify-start pt-6 pb-24 overflow-y-auto" : "min-h-screen items-center py-16"}`}>
         <div className="mx-auto w-full max-w-md">
           <div className="mb-14 flex items-center justify-between lg:hidden">
             <BrandMark />
@@ -261,9 +261,14 @@ function LoginPage() {
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  onInput={(e) => setName((e.target as HTMLInputElement).value)}
                   required
+                  autoComplete="name"
+                  autoCapitalize="words"
+                  autoCorrect="off"
+                  spellCheck={false}
                   placeholder="Enter your hunter name (e.g. Jin-Woo)"
-                  className="mt-2 h-12 rounded-sm border-border bg-card px-4"
+                  className="mt-2 h-12 rounded-sm border-border bg-card px-4 text-foreground"
                 />
               </label>
             )}
@@ -275,9 +280,14 @@ function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
                   required
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   placeholder="hunter@system.domain"
-                  className="mt-2 h-12 rounded-sm border-border bg-card px-4"
+                  className="mt-2 h-12 rounded-sm border-border bg-card px-4 text-foreground"
                 />
               </label>
             ) : !isSignUp ? (
@@ -286,9 +296,14 @@ function LoginPage() {
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  onInput={(e) => setName((e.target as HTMLInputElement).value)}
                   required
+                  autoComplete="name"
+                  autoCapitalize="words"
+                  autoCorrect="off"
+                  spellCheck={false}
                   placeholder="Enter your name"
-                  className="mt-2 h-12 rounded-sm border-border bg-card px-4"
+                  className="mt-2 h-12 rounded-sm border-border bg-card px-4 text-foreground"
                 />
               </label>
             ) : null}
@@ -300,10 +315,15 @@ function LoginPage() {
                   type={show ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
                   required
                   minLength={4}
+                  autoComplete={isSignUp ? "new-password" : "current-password"}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   placeholder={supabaseReady ? "Enter password (6+ chars)" : "Any 4+ characters for demo"}
-                  className="h-12 rounded-sm border-border bg-card px-4 pr-12"
+                  className="h-12 rounded-sm border-border bg-card px-4 pr-12 text-foreground"
                 />
                 <Button
                   type="button"
