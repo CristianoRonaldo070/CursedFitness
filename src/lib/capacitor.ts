@@ -26,12 +26,23 @@ export async function initCapacitor(): Promise<void> {
       SplashScreen.hide({ fadeOutDuration: 200 });
     }, 500);
 
+    const { Keyboard } = await import("@capacitor/keyboard");
+
+    // Ensure focused input is scrolled into view when keyboard opens
+    Keyboard.addListener("keyboardDidShow", () => {
+      const active = document.activeElement as HTMLElement | null;
+      if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA")) {
+        active.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
+
     // Handle Android hardware back button cleanly
     App.addListener("backButton", ({ canGoBack }) => {
       // If an input is focused, dismiss keyboard gracefully without navigating
       const active = document.activeElement as HTMLElement | null;
       if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) {
         active.blur();
+        Keyboard.hide().catch(() => {});
         return;
       }
 

@@ -16,6 +16,10 @@ const config: CapacitorConfig = {
       style: "DARK",
       backgroundColor: "#0a0e1a",
     },
+    Keyboard: {
+      resize: "body",
+      resizeOnFullScreen: true,
+    },
   },
   android: {
     backgroundColor: "#0a0e1a",
