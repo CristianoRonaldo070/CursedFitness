@@ -1,11 +1,15 @@
 import { detectCapacitor } from "@/hooks/use-capacitor";
 
+let isCapacitorInitialized = false;
+
 /**
  * Initialize Capacitor native plugins when running inside the Android APK.
  * Safe to call from the browser — silently no-ops if not in Capacitor.
  */
 export async function initCapacitor(): Promise<void> {
   if (!detectCapacitor()) return;
+  if (isCapacitorInitialized) return;
+  isCapacitorInitialized = true;
 
   try {
     // Dynamic imports so these never load in the web bundle
@@ -27,10 +31,7 @@ export async function initCapacitor(): Promise<void> {
       // If an input is focused, dismiss keyboard gracefully without navigating
       const active = document.activeElement as HTMLElement | null;
       if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) {
-        // Use requestAnimationFrame to avoid layout thrashing
-        requestAnimationFrame(() => {
-          active.blur();
-        });
+        active.blur();
         return;
       }
 

@@ -173,7 +173,7 @@ function LoginPage() {
         </div>
       </section>
 
-      <section className={`flex px-5 sm:px-10 ${isNative ? "min-h-[100dvh] flex-col justify-start pt-6 pb-24 overflow-y-auto" : "min-h-screen items-center py-16"}`}>
+      <section className={`flex px-5 sm:px-10 ${isNative ? "w-full max-w-md mx-auto pt-6 pb-12" : "min-h-screen items-center py-16"}`}>
         <div className="mx-auto w-full max-w-md">
           <div className="mb-14 flex items-center justify-between lg:hidden">
             <BrandMark />
@@ -264,7 +264,6 @@ function LoginPage() {
                   id="hunter-name-field"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onInput={(e) => setName((e.target as HTMLInputElement).value)}
                   required
                   autoComplete="name"
                   autoCapitalize="words"
@@ -284,7 +283,6 @@ function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
                   required
                   autoComplete="email"
                   autoCapitalize="none"
@@ -301,7 +299,6 @@ function LoginPage() {
                   id="hunter-name-demo-field"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onInput={(e) => setName((e.target as HTMLInputElement).value)}
                   required
                   autoComplete="name"
                   autoCapitalize="words"
@@ -321,7 +318,6 @@ function LoginPage() {
                   type={show ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
                   required
                   minLength={4}
                   autoComplete={isSignUp ? "new-password" : "current-password"}

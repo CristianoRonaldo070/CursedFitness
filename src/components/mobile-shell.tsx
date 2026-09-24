@@ -24,6 +24,9 @@ const tabs = [
  */
 export function MobileShell({ children }: { children: ReactNode }) {
   const isNative = useIsCapacitor();
+  const matches = useMatches();
+  const currentPath = matches[matches.length - 1]?.fullPath ?? "/";
+  const isAuthRoute = currentPath === "/login";
 
   if (!isNative) {
     return <>{children}</>;
@@ -31,11 +34,11 @@ export function MobileShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="mobile-shell flex min-h-screen flex-col">
-      {/* Main scrollable content area — extra bottom padding for the tab bar */}
-      <div className="flex-1 overflow-y-auto pb-20">{children}</div>
+      {/* Main scrollable content area — extra bottom padding for the tab bar on regular screens */}
+      <div className={`flex-1 overflow-y-auto ${isAuthRoute ? "" : "pb-20"}`}>{children}</div>
 
-      {/* Bottom tab navigation */}
-      <BottomTabBar />
+      {/* Bottom tab navigation — only on main app screens */}
+      {!isAuthRoute && <BottomTabBar />}
     </div>
   );
 }
