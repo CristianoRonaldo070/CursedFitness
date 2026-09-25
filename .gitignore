@@ -37,3 +37,4 @@ android/local.properties
 *.njsproj
 *.sln
 *.sw?
+? rank.png

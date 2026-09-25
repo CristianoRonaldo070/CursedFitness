@@ -4,6 +4,8 @@ import { ArrowRight, ChevronRight, Crosshair, Download, Dumbbell, ShieldCheck, S
 import { Button } from "@/components/ui/button";
 import { SiteHeader, SystemCore } from "@/components/brand";
 import { MobileAppPreview } from "@/components/mobile-shell";
+import { RankEmblem } from "@/components/rank-emblem";
+import { type RankTier } from "@/lib/ranks";
 import athleteImage from "@/assets/cursed-athlete.jpg";
 import trainingImage from "@/assets/cursed-training.jpg";
 
@@ -52,7 +54,23 @@ function HomePage() {
       <div className="mt-14 grid gap-px border border-border bg-border md:grid-cols-3"><Feature icon={<Crosshair/>} n="01" title="Scan your stats" text="Height, weight, age, activity and goals shape your starting protocol."/><Feature icon={<Dumbbell/>} n="02" title="Receive missions" text="A focused training split turns progress into daily, measurable quests."/><Feature icon={<ShieldCheck/>} n="03" title="Break your limits" text="Complete streaks, earn XP and unlock the next hunter rank."/></div></div></section>
 
     <section className="py-24"><div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2 lg:items-center lg:px-8"><div className="relative min-h-[520px] overflow-hidden border border-border"><img src={trainingImage} loading="lazy" width={1536} height={1024} alt="Athlete completing a strength mission" className="absolute inset-0 h-full w-full object-cover object-[62%_center]"/><div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"/><div className="system-panel absolute bottom-5 left-5 right-5 p-5"><div className="flex items-center justify-between"><span className="system-label">Daily mission</span><span className="font-mono text-xs text-success">+240 XP</span></div><p className="mt-3 font-display text-3xl font-bold uppercase">Strength of the awakened</p><div className="mt-4 h-1 bg-muted"><div className="h-full w-3/4 bg-primary shadow-[0_0_14px_var(--system-glow)]"/></div></div></div>
-      <div><p className="system-label">Ascension path</p><h2 className="mt-4 text-5xl font-black uppercase leading-none md:text-7xl">Every rep<br/>earns power.</h2><p className="mt-6 max-w-lg leading-7 text-muted-foreground">Your rank is more than a badge. It records consistency, strength gains and missions conquered.</p><div className="mt-10 flex items-center gap-2">{ranks.map((rank,i)=><div key={rank} className={`grid size-11 place-items-center border font-display text-xl font-black ${i===0 ? "border-primary bg-primary text-primary-foreground shadow-[0_0_24px_var(--system-glow)]" : "border-border bg-card text-muted-foreground"}`}>{rank}</div>)}</div><Button asChild variant="green" size="system" className="mt-9"><Link to="/assessment">Start assessment <ChevronRight/></Link></Button></div></div></section>
+      <div><p className="system-label">Ascension path</p><h2 className="mt-4 text-5xl font-black uppercase leading-none md:text-7xl">Every rep<br/>earns power.</h2><p className="mt-6 max-w-lg leading-7 text-muted-foreground">Your rank is more than a badge. It records consistency, strength gains and missions conquered.</p>
+        <div className="mt-10 flex flex-wrap items-center gap-2.5">
+          {ranks.map((rank, i) => (
+            <div
+              key={rank}
+              className={`group flex items-center gap-2 border p-2 rounded-sm transition-all duration-300 hover:scale-105 ${
+                i === 0
+                  ? "border-primary bg-primary/10 shadow-[0_0_24px_var(--system-glow)]"
+                  : "border-border bg-card/60"
+              }`}
+            >
+              <RankEmblem rank={rank as RankTier} size="sm" withGlow={i === 0} />
+              <span className="font-display text-sm font-black pr-1">{rank}</span>
+            </div>
+          ))}
+        </div>
+        <Button asChild variant="green" size="system" className="mt-9"><Link to="/assessment">Start assessment <ChevronRight/></Link></Button></div></div></section>
 
     {/* ───────── Download App Section (website only) ───────── */}
     {!isNative && (

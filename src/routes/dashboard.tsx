@@ -12,10 +12,12 @@ import {
   Info,
   RotateCcw,
   Salad,
+  ShieldCheck,
   Sparkles,
   Target,
   Timer,
   Trophy,
+  X,
   Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -34,6 +36,13 @@ import { AuthGuard } from "@/components/auth-guard";
 import { WarmupGate } from "@/components/warmup-gate";
 import { shouldDailyQuestsReset, markDailyQuestsCycle } from "@/lib/warmup";
 import { useIsCapacitor } from "@/hooks/use-capacitor";
+import {
+  type RankTier,
+  RANK_ORDER,
+  RANKS_DATA,
+  getRankInfo,
+} from "@/lib/ranks";
+import { RankEmblem, RankPromotionModal } from "@/components/rank-emblem";
 import bodyImage from "@/assets/body.png";
 
 export const Route = createFileRoute("/dashboard")({
@@ -60,22 +69,11 @@ export const Route = createFileRoute("/dashboard")({
   ),
 });
 
-const rankList = ["E", "D", "C", "B", "A", "S"];
-
 const QUEST_DEFS = [
   { id: "steps", title: "8,000 steps", xp: 40, icon: <Footprints /> },
   { id: "protein", title: "Hit protein goal", xp: 60, icon: <Salad /> },
   { id: "workout", title: "Main workout", xp: 240, icon: <Dumbbell /> },
 ];
-
-function getRank(xp: number): { rank: string; nextRank: string; currentTierXp: number; targetXp: number } {
-  if (xp >= 7500) return { rank: "S", nextRank: "MAX", currentTierXp: xp, targetXp: 10000 };
-  if (xp >= 5000) return { rank: "A", nextRank: "S-Rank", currentTierXp: xp - 5000, targetXp: 2500 };
-  if (xp >= 3500) return { rank: "B", nextRank: "A-Rank", currentTierXp: xp - 3500, targetXp: 1500 };
-  if (xp >= 2000) return { rank: "C", nextRank: "B-Rank", currentTierXp: xp - 2000, targetXp: 1500 };
-  if (xp >= 1000) return { rank: "D", nextRank: "C-Rank", currentTierXp: xp - 1000, targetXp: 1000 };
-  return { rank: "E", nextRank: "D-Rank", currentTierXp: xp, targetXp: 1000 };
-}
 
 function DashboardPage() {
   const [p, setP] = useState<FitnessProfile>(defaultProfile);
@@ -141,10 +139,13 @@ function DashboardPage() {
   const bmi = getBmi(p);
   const rec = getHunterRecommendations(p);
 
+  const [inspectedRank, setInspectedRank] = useState<RankTier | null>(null);
+  const [testAscensionTier, setTestAscensionTier] = useState<RankTier | null>(null);
+
   const currentXp = p.xp ?? 340;
   const completed = p.completedQuests ?? [];
-  const rankInfo = getRank(currentXp);
-  const xpPercent = Math.min(100, Math.round((rankInfo.currentTierXp / rankInfo.targetXp) * 100));
+  const rankInfo = getRankInfo(currentXp);
+  const xpPercent = rankInfo.tierProgressPercent;
 
   async function handleToggleQuest(questId: string, questXp: number, questTitle: string) {
     const isCompleted = completed.includes(questId);
@@ -214,22 +215,52 @@ function DashboardPage() {
     <main className={`min-h-screen ${isNative ? "pt-4 pb-24" : "pt-18"}`}>
       <SiteHeader />
       <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
-        <div className="flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="system-label">
-                System synchronized // {rankInfo.rank}-Rank Hunter
-              </p>
-              <span className="border border-primary/40 bg-primary/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-primary">
-                {rec.protocolTag}
+        <div className="flex flex-col gap-6 border-b border-border pb-8 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Equipped Hunter Rank Emblem with Glowing Aura */}
+            <div className="relative shrink-0">
+              <RankEmblem
+                rank={rankInfo.tier}
+                size="xl"
+                withGlow={true}
+                interactive={true}
+                onClick={() => setInspectedRank(rankInfo.tier)}
+                className="cursor-pointer transition-transform hover:scale-105"
+              />
+              <span
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 font-mono text-[9px] font-black uppercase px-2 py-0.5 rounded border shadow-lg bg-background whitespace-nowrap"
+                style={{
+                  color: rankInfo.color,
+                  borderColor: rankInfo.color,
+                }}
+              >
+                {rankInfo.tier}-Rank
               </span>
             </div>
-            <h1 className="mt-3 text-5xl font-black uppercase md:text-7xl">
-              Welcome, <span className="text-primary">{p.name}</span>
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Age {p.age} · {p.weight} kg · {p.height} cm — {rec.protocolTitle}
-            </p>
+
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className="font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border"
+                  style={{
+                    color: rankInfo.color,
+                    borderColor: rankInfo.color,
+                    backgroundColor: `${rankInfo.color}15`,
+                  }}
+                >
+                  {rankInfo.tier}-Rank // {rankInfo.title}
+                </span>
+                <span className="border border-primary/40 bg-primary/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-primary">
+                  {rec.protocolTag}
+                </span>
+              </div>
+              <h1 className="mt-2 text-4xl font-black uppercase md:text-6xl tracking-tight">
+                Welcome, <span className="text-primary">{p.name}</span>
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Age {p.age} · {p.weight} kg · {p.height} cm — {rec.protocolTitle}
+              </p>
+            </div>
           </div>
           <Button asChild variant="orangeOutline" size="system">
             <Link to="/assessment">Recalibrate stats</Link>
@@ -298,7 +329,7 @@ function DashboardPage() {
             icon={<Zap />}
             label="Current XP"
             value={String(currentXp)}
-            sub={`${rankInfo.targetXp - rankInfo.currentTierXp} to ${rankInfo.nextRank}`}
+            sub={rankInfo.nextTier === "MAX" ? "Max Ascension Reached" : `${rankInfo.targetTierXp - rankInfo.currentTierXp} XP to ${rankInfo.nextTier}-Rank`}
           />
         </section>
 
@@ -373,50 +404,109 @@ function DashboardPage() {
 
           <div className="system-panel p-7">
             <div className="flex items-center justify-between">
-              <p className="system-label">Rank progression</p>
+              <div>
+                <p className="system-label">Rank progression</p>
+                <p className="font-display text-xl font-bold uppercase text-foreground mt-0.5">
+                  Hunter Ascension Path
+                </p>
+              </div>
               <Trophy className="size-5 text-primary" />
             </div>
-            <div className="my-7 flex items-center justify-between">
-              {rankList.map((r) => {
-                const isActive = r === rankInfo.rank;
+
+            {/* Interactive Emblems Grid */}
+            <div className="my-6 grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+              {RANK_ORDER.map((r) => {
+                const isActive = r === rankInfo.tier;
+                const meta = RANKS_DATA[r];
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={r}
-                    className={`grid size-9 place-items-center border font-display text-lg font-bold transition-all ${
+                    onClick={() => setInspectedRank(r)}
+                    className={`group relative flex flex-col items-center justify-between p-2.5 rounded-sm border transition-all duration-300 cursor-pointer ${
                       isActive
-                        ? "border-primary bg-primary text-primary-foreground shadow-[0_0_20px_var(--system-glow)]"
-                        : "border-border text-muted-foreground"
+                        ? "border-primary bg-primary/10 shadow-[0_0_24px_var(--system-glow)] scale-105"
+                        : "border-border/80 bg-card/60 hover:border-primary/50 hover:bg-muted/30"
                     }`}
                   >
-                    {r}
-                  </div>
+                    {isActive && (
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded font-mono text-[7px] font-black uppercase tracking-widest bg-primary text-primary-foreground shadow">
+                        EQUIPPED
+                      </span>
+                    )}
+                    <RankEmblem
+                      rank={r}
+                      size="sm"
+                      withGlow={isActive}
+                      className="transition-transform group-hover:scale-110"
+                    />
+                    <div className="mt-1.5 text-center">
+                      <span className={`block font-display text-xs font-black uppercase ${isActive ? "text-primary" : "text-foreground"}`}>
+                        {r}
+                      </span>
+                      <span className="block font-mono text-[8px] uppercase tracking-wider text-muted-foreground truncate max-w-[50px]">
+                        {meta.title}
+                      </span>
+                    </div>
+                  </button>
                 );
               })}
             </div>
-            <div className="flex justify-between text-xs">
-              <span>{currentXp} XP</span>
+
+            {/* Progress Bar & Stats */}
+            <div className="flex justify-between text-xs font-mono">
+              <span className="text-primary font-bold">{currentXp} XP</span>
               <span className="text-muted-foreground">
-                Next: {rankInfo.nextRank}
+                {rankInfo.nextTier === "MAX"
+                  ? "MAX ASCENSION ACHIEVED"
+                  : `Next: ${rankInfo.nextTier}-Rank (${rankInfo.nextTitle})`}
               </span>
             </div>
-            <div className="mt-2 h-1.5 bg-muted">
+            <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary shadow-[0_0_12px_var(--system-glow)] transition-all duration-500"
                 style={{ width: `${xpPercent}%` }}
               />
             </div>
-            <div className="mt-7 border-t border-border pt-5">
-              <p className="font-display text-2xl font-bold uppercase">{rankInfo.nextRank} unlocks</p>
-              <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
-                <li className="flex gap-2">
-                  <ChevronRight className="size-4 text-primary" />
-                  Advanced hypertrophy missions
-                </li>
-                <li className="flex gap-2">
-                  <ChevronRight className="size-4 text-primary" />
-                  Anabolic recovery multiplier
-                </li>
+
+            {/* Next Rank Unlocks from Rank Metadata */}
+            <div className="mt-6 border-t border-border pt-4">
+              <div className="flex items-center justify-between">
+                <p className="font-display text-lg font-bold uppercase">
+                  {rankInfo.nextTier === "MAX" ? "Max Rank Unlocked" : `${rankInfo.nextTier}-Rank (${rankInfo.nextTitle}) Unlocks`}
+                </p>
+                <span className="font-mono text-[10px] text-muted-foreground">
+                  {rankInfo.nextTier === "MAX" ? "100%" : `${rankInfo.targetTierXp - rankInfo.currentTierXp} XP Needed`}
+                </span>
+              </div>
+              <ul className="mt-2.5 space-y-1.5 text-xs text-muted-foreground">
+                {(rankInfo.nextTier === "MAX" ? rankInfo.unlocks : RANKS_DATA[rankInfo.nextTier].unlocks).map((unlock) => (
+                  <li key={unlock} className="flex items-center gap-2">
+                    <ChevronRight className="size-3.5 text-primary shrink-0" />
+                    <span>{unlock}</span>
+                  </li>
+                ))}
               </ul>
+
+              {/* Fanfare Test & Inspector Action */}
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-border/70 pt-3.5">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setTestAscensionTier(
+                      rankInfo.tier === "S" ? "E" : (RANK_ORDER[RANK_ORDER.indexOf(rankInfo.tier) + 1] || "D")
+                    )
+                  }
+                  className="font-mono text-[10px] uppercase tracking-wider text-primary border-primary/40 hover:bg-primary/10"
+                >
+                  <Sparkles className="mr-1.5 size-3.5" /> Preview Ascension Fanfare
+                </Button>
+                <span className="font-mono text-[9px] text-muted-foreground">
+                  Click any emblem to inspect
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -634,6 +724,219 @@ function DashboardPage() {
           diet, especially if you have a medical condition.
         </p>
       </div>
+
+      {/* Automatic Rank Promotion Ceremony (fires when hunter crosses rank threshold) */}
+      <RankPromotionModal currentXp={currentXp} />
+
+      {/* Emblem Inspection Modal */}
+      {inspectedRank && (() => {
+        const inspectedMeta = RANKS_DATA[inspectedRank];
+        const isCurrentEquipped = inspectedRank === rankInfo.tier;
+        return (
+          <div className="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-background/85 backdrop-blur-md animate-in fade-in duration-200">
+            <div
+              className="relative w-full max-w-md border border-border bg-card p-6 md:p-8 text-center shadow-2xl [clip-path:polygon(0_12px,12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%)] animate-in zoom-in-95 duration-200"
+              style={{
+                boxShadow: `0 0 35px ${inspectedMeta.glowColor}`,
+                borderColor: inspectedMeta.color,
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setInspectedRank(null)}
+                className="absolute right-4 top-4 p-1 rounded-sm text-muted-foreground hover:text-foreground cursor-pointer"
+                aria-label="Close emblem inspection"
+              >
+                <X className="size-5" />
+              </button>
+
+              <div
+                className="flex items-center justify-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-widest"
+                style={{ color: inspectedMeta.color }}
+              >
+                <ShieldCheck className="size-3.5" /> Official Hunter Emblem
+              </div>
+
+              <div className="my-5 flex justify-center">
+                <RankEmblem rank={inspectedRank} size="hero" withGlow={true} />
+              </div>
+
+              <h3 className="font-display text-3xl font-black uppercase text-foreground">
+                {inspectedMeta.tier}-Rank // {inspectedMeta.title}
+              </h3>
+              <p className="mt-1 font-mono text-xs font-semibold" style={{ color: inspectedMeta.color }}>
+                Requirement: {inspectedMeta.minXp} XP {isCurrentEquipped && "• (Currently Equipped)"}
+              </p>
+
+              <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                {inspectedMeta.description}
+              </p>
+
+              <div className="mt-5 border-t border-border/80 pt-4 text-left">
+                <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-foreground">
+                  Rank Protocols & Capabilities:
+                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {inspectedMeta.unlocks.map((u) => (
+                    <li key={u} className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <ChevronRight className="size-3.5 shrink-0" style={{ color: inspectedMeta.color }} />
+                      <span>{u}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-6 flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setTestAscensionTier(inspectedRank);
+                    setInspectedRank(null);
+                  }}
+                  className="flex-1 font-mono text-[11px] uppercase tracking-wider"
+                >
+                  <Sparkles className="mr-1.5 size-3.5" /> Test Animation
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => setInspectedRank(null)}
+                  className="flex-1 font-mono text-[11px] uppercase tracking-wider"
+                  style={{
+                    backgroundColor: inspectedMeta.color,
+                    color: "#0a0e1a",
+                  }}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Ascension Fanfare Preview Modal */}
+      {testAscensionTier && (() => {
+        const testMeta = RANKS_DATA[testAscensionTier];
+        const testPrevTier = RANK_ORDER[Math.max(0, RANK_ORDER.indexOf(testAscensionTier) - 1)];
+        const testPrevMeta = RANKS_DATA[testPrevTier];
+        return (
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-background/90 backdrop-blur-2xl animate-in fade-in duration-300">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center">
+              <div
+                className="size-[650px] rounded-full blur-[140px] opacity-40 animate-pulse"
+                style={{ backgroundColor: testMeta.glowColor }}
+              />
+              <div className="absolute size-[550px] rounded-full border border-dashed border-primary/20 animate-core-spin" />
+              <div className="absolute size-[700px] rounded-full border border-primary/10 animate-core-reverse" />
+            </div>
+
+            <div
+              className="relative z-10 w-full max-w-lg border border-border bg-card p-6 md:p-8 text-center shadow-[0_25px_80px_rgba(0,0,0,0.8)] [clip-path:polygon(0_16px,16px_0,100%_0,100%_calc(100%-16px),calc(100%-16px)_100%,0_100%)] animate-in zoom-in-90 duration-500"
+              style={{
+                boxShadow: `0 0 50px ${testMeta.glowColor}, inset 0 0 30px ${testMeta.glowColor}`,
+                borderColor: testMeta.color,
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setTestAscensionTier(null)}
+                className="absolute right-4 top-4 rounded-sm p-1.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                aria-label="Close ascension preview"
+              >
+                <X className="size-5" />
+              </button>
+
+              <div className="flex items-center justify-center gap-2">
+                <Sparkles className="size-4 animate-spin" style={{ color: testMeta.color }} />
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.25em]" style={{ color: testMeta.color }}>
+                  System Notice // Rank Ascension
+                </p>
+                <Sparkles className="size-4 animate-spin" style={{ color: testMeta.color }} />
+              </div>
+
+              <h2 className="mt-3 font-display text-4xl md:text-5xl font-black uppercase tracking-tight text-foreground">
+                Rank Ascension!
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Your physical power and quests have unlocked the {testMeta.title} rank.
+              </p>
+
+              <div className="mt-5 flex items-center justify-center gap-4">
+                <div className="flex items-center gap-2 rounded border border-border bg-muted/40 px-3 py-1.5 opacity-60">
+                  <img src={testPrevMeta.image} alt={testPrevMeta.title} className="size-6 object-contain" />
+                  <span className="font-mono text-xs font-bold uppercase">{testPrevMeta.tier} Rank</span>
+                </div>
+                <ChevronRight className="size-4 text-muted-foreground animate-pulse" />
+                <div
+                  className="flex items-center gap-2 rounded border px-3.5 py-1.5 font-bold shadow-lg"
+                  style={{
+                    borderColor: testMeta.color,
+                    backgroundColor: `${testMeta.color}20`,
+                    color: testMeta.color,
+                  }}
+                >
+                  <Zap className="size-4" />
+                  <span className="font-mono text-xs uppercase tracking-wider">
+                    {testMeta.tier}-Rank {testMeta.title}
+                  </span>
+                </div>
+              </div>
+
+              <div className="my-6 flex justify-center">
+                <div className="relative group">
+                  <div
+                    className="absolute -inset-4 rounded-full blur-2xl opacity-75 animate-pulse"
+                    style={{ backgroundColor: testMeta.glowColor }}
+                  />
+                  <img
+                    src={testMeta.image}
+                    alt={`${testMeta.tier} Rank Emblem`}
+                    className="relative z-10 size-48 md:size-56 object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.7)] animate-in zoom-in-75 duration-700 hover:scale-110 transition-transform"
+                  />
+                </div>
+              </div>
+
+              <div className="rounded border border-border/80 bg-background/60 p-4 backdrop-blur-md">
+                <p className="font-display text-2xl font-black uppercase" style={{ color: testMeta.color }}>
+                  {testMeta.title} Emblem Equipped
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  {testMeta.description}
+                </p>
+                <div className="mt-4 border-t border-border/60 pt-3 text-left">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-foreground">
+                    New Protocols Unlocked:
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {testMeta.unlocks.map((u) => (
+                      <li key={u} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Check className="size-3.5 shrink-0" style={{ color: testMeta.color }} />
+                        <span>{u}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                onClick={() => setTestAscensionTier(null)}
+                size="system"
+                className="mt-6 w-full font-mono text-xs uppercase tracking-widest cursor-pointer"
+                style={{
+                  backgroundColor: testMeta.color,
+                  color: "#0a0e1a",
+                }}
+              >
+                Equip {testMeta.tier}-Rank Emblem & Ascend
+              </Button>
+            </div>
+          </div>
+        );
+      })()}
     </main>
   );
 }

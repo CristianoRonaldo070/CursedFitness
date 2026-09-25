@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
 import { useIsCapacitor } from "@/hooks/use-capacitor";
+import { getProfile } from "@/lib/profile";
+import { getRankInfo } from "@/lib/ranks";
+import { RankEmblem } from "@/components/rank-emblem";
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
@@ -42,6 +45,9 @@ export function SiteHeader() {
     { to: "/dashboard", label: "System", protected: true },
     { to: "/diet", label: "Diet", protected: true },
   ] as const;
+
+  const profile = getProfile();
+  const rankInfo = getRankInfo(profile.xp);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
@@ -84,7 +90,8 @@ export function SiteHeader() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              <span className="font-mono text-xs text-primary font-semibold">
+              <span className="font-mono text-xs text-primary font-semibold flex items-center gap-1.5">
+                <RankEmblem rank={rankInfo.tier} size="xs" withGlow={false} />
                 // {user?.name || "Hunter"}
               </span>
               <Button
