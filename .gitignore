@@ -38,3 +38,4 @@ android/local.properties
 *.sln
 *.sw?
 ? rank.png
+*.pdf

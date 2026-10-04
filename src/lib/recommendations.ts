@@ -94,126 +94,403 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
     ageInsight = `Age ${age} Veteran Hunter Protocol: Focus on muscle preservation and lean hypertrophy. Distribute protein evenly across 4 meals (35g+ per meal) to trigger the mTOR pathway, paired with compound machine and barbell movements.`;
   }
 
-  // Focused Workout Plan
+  // Focused Workout Plan dynamically adapted to Activity Level (low: 1-2 days, moderate: 3-4 days, high: 5-6 days)
   let exercises: HunterRecommendation["exercises"] = [];
+
   if (isUnderweight || goal === "build") {
-    exercises = [
-      {
-        day: "Day 01",
-        focus: "Heavy Push (Chest & Shoulders Mass)",
-        lifts: [
-          { name: "Barbell Bench Press", setsReps: "4 sets × 6–8 reps", note: "Heavy compound, 2 min rest" },
-          { name: "Incline Dumbbell Press", setsReps: "3 sets × 8–10 reps", note: "Upper chest thickness" },
-          { name: "Overhead Dumbbell Press", setsReps: "3 sets × 8–10 reps", note: "Shoulder mass builder" },
-          { name: "Tricep Dips or Pushdowns", setsReps: "3 sets × 10–12 reps", note: "Arm density finisher" },
-        ],
-      },
-      {
-        day: "Day 02",
-        focus: "Heavy Pull (Back Width & Lat Density)",
-        lifts: [
-          { name: "Barbell Deadlift / Rack Pull", setsReps: "4 sets × 5 reps", note: "Full-body mass primer" },
-          { name: "Chest-Supported T-Bar Row", setsReps: "4 sets × 8 reps", note: "Mid-back thickness" },
-          { name: "Weighted / Assisted Pull-Ups", setsReps: "3 sets × 6–8 reps", note: "V-taper width" },
-          { name: "Incline Dumbbell Bicep Curls", setsReps: "3 sets × 10–12 reps", note: "Full bicep stretch" },
-        ],
-      },
-      {
-        day: "Day 03",
-        focus: "Leg Foundation (Quad & Glute Power)",
-        lifts: [
-          { name: "Barbell Back Squats", setsReps: "4 sets × 6–8 reps", note: "Greatest anabolic hormone stimulus" },
-          { name: "Romanian Deadlift (RDL)", setsReps: "3 sets × 8–10 reps", note: "Hamstrings & posterior chain" },
-          { name: "Bulgarian Split Squats", setsReps: "3 sets × 10 reps/leg", note: "Single leg hypertrophy" },
-          { name: "Standing Calf Raises", setsReps: "4 sets × 12–15 reps", note: "Controlled pause at top" },
-        ],
-      },
-      {
-        day: "Day 04",
-        focus: "Upper Mass & Arm Growth Split",
-        lifts: [
-          { name: "Dumbbell Incline Fly-to-Press", setsReps: "3 sets × 8–10 reps", note: "Deep hypertrophy stretch" },
-          { name: "Close-Grip Lat Pulldown", setsReps: "3 sets × 10 reps", note: "Squeeze for 1 sec" },
-          { name: "Lateral Dumbbell Raises", setsReps: "4 sets × 12–15 reps", note: "Side delt cap growth" },
-          { name: "EZ-Bar Skullcrushers & Curls", setsReps: "3 supersets × 12 reps", note: "Arm mass pump" },
-        ],
-      },
-    ];
+    if (activity === "low") {
+      // 1-2 Days: High-Efficiency Full Body Mass Compounds
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Full Body Heavy Mass (Compound A)",
+          lifts: [
+            { name: "Barbell Back Squats", setsReps: "4 sets × 6–8 reps", note: "Greatest anabolic hormone stimulus & quad power" },
+            { name: "Barbell Bench Press", setsReps: "4 sets × 6–8 reps", note: "Heavy horizontal push for chest mass" },
+            { name: "Chest-Supported T-Bar Row", setsReps: "4 sets × 8 reps", note: "Mid-back & lat thickness" },
+            { name: "Overhead Dumbbell Press", setsReps: "3 sets × 8–10 reps", note: "Shoulder mass builder" },
+            { name: "Incline Dumbbell Bicep Curls", setsReps: "3 sets × 10–12 reps", note: "Full bicep stretch & arm thickness" },
+            { name: "Standing Calf Raises", setsReps: "4 sets × 12–15 reps", note: "Controlled pause at top" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Full Body Heavy Mass (Compound B)",
+          lifts: [
+            { name: "Barbell Deadlift / Rack Pull", setsReps: "4 sets × 5 reps", note: "Full-body mass primer & posterior chain" },
+            { name: "Incline Dumbbell Press", setsReps: "4 sets × 8–10 reps", note: "Upper chest thickness & clavicular head" },
+            { name: "Weighted / Assisted Pull-Ups", setsReps: "4 sets × 6–8 reps", note: "V-taper lat width & vertical pull" },
+            { name: "Bulgarian Split Squats", setsReps: "3 sets × 10 reps/leg", note: "Unilateral quad & glute hypertrophy" },
+            { name: "Tricep Dips or Pushdowns", setsReps: "3 sets × 10–12 reps", note: "Arm density finisher" },
+            { name: "Hanging Knee / Leg Raises", setsReps: "3 sets × 12–15 reps", note: "Core brace & abdominal stability" },
+          ],
+        },
+      ];
+    } else if (activity === "high") {
+      // 5-6 Days: High-Frequency Athlete Mass Specialization
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Push Power (Chest & Anterior Delts Mass)",
+          lifts: [
+            { name: "Barbell Bench Press", setsReps: "4 sets × 6–8 reps", note: "Heavy power compound, 2 min rest" },
+            { name: "Incline Dumbbell Press", setsReps: "4 sets × 8–10 reps", note: "Upper chest thickness" },
+            { name: "Standing Overhead Barbell Press", setsReps: "3 sets × 8–10 reps", note: "Compound shoulder mass builder" },
+            { name: "Cable Chest Flyes", setsReps: "3 sets × 12 reps", note: "Full pec stretch & pump finisher" },
+            { name: "Overhead Tricep Extensions", setsReps: "3 sets × 10–12 reps", note: "Tricep long-head mass" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Pull Power (Back Density & Biceps)",
+          lifts: [
+            { name: "Barbell Deadlift / Rack Pull", setsReps: "4 sets × 5 reps", note: "Full-body mass primer & back density" },
+            { name: "Weighted / Assisted Pull-Ups", setsReps: "4 sets × 6–8 reps", note: "V-taper width & lat flare" },
+            { name: "Chest-Supported T-Bar Row", setsReps: "4 sets × 8 reps", note: "Mid-back thickness & rhomboids" },
+            { name: "Face Pulls", setsReps: "3 sets × 12–15 reps", note: "Rear delt health & posture" },
+            { name: "Barbell Bicep Curls", setsReps: "3 sets × 8–10 reps", note: "Strict tempo mass builder" },
+          ],
+        },
+        {
+          day: "Day 03",
+          focus: "Leg Foundation (Quad & Glute Power)",
+          lifts: [
+            { name: "Barbell Back Squats", setsReps: "4 sets × 6–8 reps", note: "Greatest anabolic hormone stimulus" },
+            { name: "Leg Press", setsReps: "3 sets × 10–12 reps", note: "High mechanical tension quad volume" },
+            { name: "Walking Dumbbell Lunges", setsReps: "3 sets × 10 steps/leg", note: "Unilateral quad & glute drive" },
+            { name: "Standing Calf Raises", setsReps: "4 sets × 12–15 reps", note: "Controlled stretch at bottom" },
+            { name: "Hanging Leg Raises", setsReps: "3 sets × 15 reps", note: "Core stability & abdominal thickness" },
+          ],
+        },
+        {
+          day: "Day 04",
+          focus: "Hypertrophy Push (Shoulders & Upper Chest)",
+          lifts: [
+            { name: "Incline Barbell Bench Press", setsReps: "4 sets × 8–10 reps", note: "Clavicular head fiber activation" },
+            { name: "Dumbbell Incline Fly-to-Press", setsReps: "3 sets × 8–10 reps", note: "Deep hypertrophy stretch" },
+            { name: "Lateral Dumbbell Raises", setsReps: "4 sets × 12–15 reps", note: "Side delt cap growth & width" },
+            { name: "Tricep Dips or Pushdowns", setsReps: "4 sets × 10–12 reps", note: "Arm density finisher" },
+          ],
+        },
+        {
+          day: "Day 05",
+          focus: "Hypertrophy Pull (Lats & Posterior Chain)",
+          lifts: [
+            { name: "Romanian Deadlift (RDL)", setsReps: "4 sets × 8–10 reps", note: "Hamstrings & posterior chain" },
+            { name: "Close-Grip Lat Pulldown", setsReps: "4 sets × 10 reps", note: "Squeeze for 1 sec at contraction" },
+            { name: "Seated Cable Row", setsReps: "3 sets × 10–12 reps", note: "Mid-back thickness" },
+            { name: "Incline Dumbbell Bicep Curls", setsReps: "3 sets × 10–12 reps", note: "Full bicep stretch" },
+          ],
+        },
+        {
+          day: "Day 06",
+          focus: "Legs & Arm Specialization (Athlete Hypertrophy)",
+          lifts: [
+            { name: "Bulgarian Split Squats", setsReps: "3 sets × 10 reps/leg", note: "Single leg hypertrophy & balance" },
+            { name: "Lying or Seated Leg Curls", setsReps: "3 sets × 12 reps", note: "Hamstring isolation" },
+            { name: "EZ-Bar Skullcrushers & Curls", setsReps: "4 supersets × 12 reps", note: "Arm mass pump & vascularity" },
+            { name: "Standing Calf Raises & Shrugs", setsReps: "4 sets × 15 reps", note: "Lower leg & upper trap density" },
+          ],
+        },
+      ];
+    } else {
+      // 3-4 Days (Moderate Active Split)
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Heavy Push (Chest & Shoulders Mass)",
+          lifts: [
+            { name: "Barbell Bench Press", setsReps: "4 sets × 6–8 reps", note: "Heavy compound, 2 min rest" },
+            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8–10 reps", note: "Upper chest thickness" },
+            { name: "Overhead Dumbbell Press", setsReps: "3 sets × 8–10 reps", note: "Shoulder mass builder" },
+            { name: "Tricep Dips or Pushdowns", setsReps: "3 sets × 10–12 reps", note: "Arm density finisher" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Heavy Pull (Back Width & Lat Density)",
+          lifts: [
+            { name: "Barbell Deadlift / Rack Pull", setsReps: "4 sets × 5 reps", note: "Full-body mass primer" },
+            { name: "Chest-Supported T-Bar Row", setsReps: "4 sets × 8 reps", note: "Mid-back thickness" },
+            { name: "Weighted / Assisted Pull-Ups", setsReps: "3 sets × 6–8 reps", note: "V-taper width" },
+            { name: "Incline Dumbbell Bicep Curls", setsReps: "3 sets × 10–12 reps", note: "Full bicep stretch" },
+          ],
+        },
+        {
+          day: "Day 03",
+          focus: "Leg Foundation (Quad & Glute Power)",
+          lifts: [
+            { name: "Barbell Back Squats", setsReps: "4 sets × 6–8 reps", note: "Greatest anabolic hormone stimulus" },
+            { name: "Romanian Deadlift (RDL)", setsReps: "3 sets × 8–10 reps", note: "Hamstrings & posterior chain" },
+            { name: "Bulgarian Split Squats", setsReps: "3 sets × 10 reps/leg", note: "Single leg hypertrophy" },
+            { name: "Standing Calf Raises", setsReps: "4 sets × 12–15 reps", note: "Controlled pause at top" },
+          ],
+        },
+        {
+          day: "Day 04",
+          focus: "Upper Mass & Arm Growth Split",
+          lifts: [
+            { name: "Dumbbell Incline Fly-to-Press", setsReps: "3 sets × 8–10 reps", note: "Deep hypertrophy stretch" },
+            { name: "Close-Grip Lat Pulldown", setsReps: "3 sets × 10 reps", note: "Squeeze for 1 sec" },
+            { name: "Lateral Dumbbell Raises", setsReps: "4 sets × 12–15 reps", note: "Side delt cap growth" },
+            { name: "EZ-Bar Skullcrushers & Curls", setsReps: "3 supersets × 12 reps", note: "Arm mass pump" },
+          ],
+        },
+      ];
+    }
   } else if (goal === "cut") {
-    exercises = [
-      {
-        day: "Day 01",
-        focus: "Upper Body Strength & Density",
-        lifts: [
-          { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Retain chest strength" },
-          { name: "Lat Pulldowns", setsReps: "4 sets × 10 reps", note: "Strict tempo" },
-          { name: "Overhead Press", setsReps: "3 sets × 10 reps", note: "Core braced" },
-        ],
-      },
-      {
-        day: "Day 02",
-        focus: "Lower Body & Posterior Engine",
-        lifts: [
-          { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Compound power" },
-          { name: "Walking Dumbbell Lunges", setsReps: "3 sets × 12 steps", note: "Calorie burner" },
-          { name: "Leg Curls", setsReps: "3 sets × 12 reps", note: "Controlled negative" },
-        ],
-      },
-      {
-        day: "Day 03",
-        focus: "Cardio Conditioning & Core",
-        lifts: [
-          { name: "Incline Treadmill Walk", setsReps: "25 mins", note: "Zone 2 heart rate" },
-          { name: "Hanging Leg Raises", setsReps: "4 sets × 15 reps", note: "Core stability" },
-        ],
-      },
-      {
-        day: "Day 04",
-        focus: "Full Body Circuit",
-        lifts: [
-          { name: "Kettlebell Swings", setsReps: "4 sets × 15 reps", note: "Explosive hip drive" },
-          { name: "Dumbbell Thrusters", setsReps: "3 sets × 10 reps", note: "Metabolic conditioning" },
-        ],
-      },
-    ];
+    if (activity === "low") {
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Full Body Strength Preservation A",
+          lifts: [
+            { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Retain upper body strength" },
+            { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Compound leg power" },
+            { name: "Lat Pulldowns", setsReps: "4 sets × 10 reps", note: "Strict back recruitment" },
+            { name: "Overhead Press", setsReps: "3 sets × 10 reps", note: "Core & shoulder strength" },
+            { name: "Hanging Leg Raises", setsReps: "3 sets × 15 reps", note: "Abdominal definition" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Full Body Strength Preservation B",
+          lifts: [
+            { name: "Barbell Deadlift", setsReps: "3 sets × 6 reps", note: "Posterior chain density" },
+            { name: "Incline Dumbbell Press", setsReps: "3 sets × 10 reps", note: "Upper chest preservation" },
+            { name: "Walking Dumbbell Lunges", setsReps: "3 sets × 12 steps", note: "Calorie burner & leg tone" },
+            { name: "Dumbbell Rows", setsReps: "3 sets × 10 reps", note: "Mid-back strength" },
+            { name: "Zone 2 Incline Walk", setsReps: "20 mins", note: "Fat oxidation finisher" },
+          ],
+        },
+      ];
+    } else if (activity === "high") {
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Upper Body Strength Cut",
+          lifts: [
+            { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Retain chest strength" },
+            { name: "Lat Pulldowns", setsReps: "4 sets × 10 reps", note: "Strict tempo" },
+            { name: "Overhead Press", setsReps: "3 sets × 10 reps", note: "Core braced" },
+            { name: "Tricep Pushdowns", setsReps: "3 sets × 12 reps", note: "Arm definition" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Lower Body & Posterior Engine",
+          lifts: [
+            { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Compound power" },
+            { name: "Walking Dumbbell Lunges", setsReps: "3 sets × 12 steps", note: "Calorie burner" },
+            { name: "Leg Curls", setsReps: "3 sets × 12 reps", note: "Controlled negative" },
+            { name: "Calf Raises", setsReps: "4 sets × 15 reps", note: "Strict tempo" },
+          ],
+        },
+        {
+          day: "Day 03",
+          focus: "Metabolic Pull & Zone 2",
+          lifts: [
+            { name: "Incline Treadmill Walk", setsReps: "30 mins", note: "Zone 2 heart rate" },
+            { name: "Dumbbell Rows", setsReps: "4 sets × 10 reps", note: "Back density" },
+            { name: "Hanging Leg Raises", setsReps: "4 sets × 15 reps", note: "Core stability" },
+          ],
+        },
+        {
+          day: "Day 04",
+          focus: "Push Hypertrophy & Calorie Burner",
+          lifts: [
+            { name: "Incline Dumbbell Press", setsReps: "4 sets × 10 reps", note: "Upper chest focus" },
+            { name: "Lateral Raises", setsReps: "4 sets × 15 reps", note: "Deltoid caps" },
+            { name: "Dips / Push-ups", setsReps: "3 sets × 15 reps", note: "High intensity burn" },
+          ],
+        },
+        {
+          day: "Day 05",
+          focus: "Posterior Chain & Core Sculpt",
+          lifts: [
+            { name: "Romanian Deadlifts (RDL)", setsReps: "4 sets × 10 reps", note: "Hamstring stretch" },
+            { name: "Pull-ups or Cable Pulldowns", setsReps: "3 sets × 10 reps", note: "Lat width" },
+            { name: "Plank & Core Circuit", setsReps: "3 rounds × 60s", note: "Core brace" },
+          ],
+        },
+        {
+          day: "Day 06",
+          focus: "Full Body Functional Athlete Conditioning",
+          lifts: [
+            { name: "Kettlebell Swings", setsReps: "4 sets × 15 reps", note: "Explosive hip drive" },
+            { name: "Dumbbell Thrusters", setsReps: "3 sets × 10 reps", note: "Metabolic conditioning" },
+            { name: "Burpees or Battle Ropes", setsReps: "3 rounds × 45s", note: "Anaerobic capacity" },
+          ],
+        },
+      ];
+    } else {
+      // 3-4 Days Cut
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Upper Body Strength & Density",
+          lifts: [
+            { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Retain chest strength" },
+            { name: "Lat Pulldowns", setsReps: "4 sets × 10 reps", note: "Strict tempo" },
+            { name: "Overhead Press", setsReps: "3 sets × 10 reps", note: "Core braced" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Lower Body & Posterior Engine",
+          lifts: [
+            { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Compound power" },
+            { name: "Walking Dumbbell Lunges", setsReps: "3 sets × 12 steps", note: "Calorie burner" },
+            { name: "Leg Curls", setsReps: "3 sets × 12 reps", note: "Controlled negative" },
+          ],
+        },
+        {
+          day: "Day 03",
+          focus: "Cardio Conditioning & Core",
+          lifts: [
+            { name: "Incline Treadmill Walk", setsReps: "25 mins", note: "Zone 2 heart rate" },
+            { name: "Hanging Leg Raises", setsReps: "4 sets × 15 reps", note: "Core stability" },
+          ],
+        },
+        {
+          day: "Day 04",
+          focus: "Full Body Circuit",
+          lifts: [
+            { name: "Kettlebell Swings", setsReps: "4 sets × 15 reps", note: "Explosive hip drive" },
+            { name: "Dumbbell Thrusters", setsReps: "3 sets × 10 reps", note: "Metabolic conditioning" },
+          ],
+        },
+      ];
+    }
   } else {
-    exercises = [
-      {
-        day: "Day 01",
-        focus: "Upper Body Power Focus",
-        lifts: [
-          { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Progressive overload" },
-          { name: "Bent Over Rows", setsReps: "4 sets × 8 reps", note: "Full back tension" },
-          { name: "Dumbbell Shoulder Press", setsReps: "3 sets × 10 reps", note: "Shoulder strength" },
-        ],
-      },
-      {
-        day: "Day 02",
-        focus: "Lower Body Hypertrophy",
-        lifts: [
-          { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Solid depth" },
-          { name: "Romanian Deadlifts", setsReps: "3 sets × 10 reps", note: "Hamstring recruitment" },
-          { name: "Calf Raises", setsReps: "4 sets × 15 reps", note: "Peak contraction" },
-        ],
-      },
-      {
-        day: "Day 03",
-        focus: "Conditioning & Agility",
-        lifts: [
-          { name: "Zone 2 Aerobic Base", setsReps: "30 min steady", note: "Cardiovascular health" },
-          { name: "Plank & Core Circuit", setsReps: "3 rounds × 60s", note: "Abdominal brace" },
-        ],
-      },
-      {
-        day: "Day 04",
-        focus: "Full Body Hypertrophy",
-        lifts: [
-          { name: "Dumbbell Incline Press", setsReps: "3 sets × 10 reps", note: "Chest volume" },
-          { name: "Pull-ups / Pulldown", setsReps: "3 sets × 10 reps", note: "Back volume" },
-          { name: "Leg Press", setsReps: "3 sets × 12 reps", note: "Quad pump" },
-        ],
-      },
-    ];
+    // Recomp / Default Track
+    if (activity === "low") {
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Full Body Power & Hypertrophy A",
+          lifts: [
+            { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Solid depth & quad power" },
+            { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Progressive overload" },
+            { name: "Bent Over Rows", setsReps: "4 sets × 8 reps", note: "Full back tension" },
+            { name: "Dumbbell Shoulder Press", setsReps: "3 sets × 10 reps", note: "Shoulder strength" },
+            { name: "Plank & Core Circuit", setsReps: "3 rounds × 60s", note: "Abdominal brace" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Full Body Power & Hypertrophy B",
+          lifts: [
+            { name: "Romanian Deadlifts (RDL)", setsReps: "4 sets × 8–10 reps", note: "Posterior chain" },
+            { name: "Dumbbell Incline Press", setsReps: "3 sets × 10 reps", note: "Upper chest volume" },
+            { name: "Pull-ups / Pulldown", setsReps: "4 sets × 8–10 reps", note: "Back volume" },
+            { name: "Leg Press", setsReps: "3 sets × 12 reps", note: "Quad pump" },
+            { name: "Bicep & Tricep Superset", setsReps: "3 supersets × 12 reps", note: "Arm density" },
+          ],
+        },
+      ];
+    } else if (activity === "high") {
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Push Strength & Hypertrophy",
+          lifts: [
+            { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Progressive overload" },
+            { name: "Incline Dumbbell Press", setsReps: "3 sets × 10 reps", note: "Upper chest focus" },
+            { name: "Dumbbell Shoulder Press", setsReps: "3 sets × 10 reps", note: "Shoulder strength" },
+            { name: "Tricep Pushdowns", setsReps: "3 sets × 12 reps", note: "Tricep burn" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Pull Strength & Lat Width",
+          lifts: [
+            { name: "Bent Over Rows", setsReps: "4 sets × 8 reps", note: "Full back tension" },
+            { name: "Pull-ups / Pulldown", setsReps: "4 sets × 10 reps", note: "Back volume" },
+            { name: "Face Pulls", setsReps: "3 sets × 15 reps", note: "Rear delt posture" },
+            { name: "Bicep Barbell Curls", setsReps: "3 sets × 10 reps", note: "Strict contraction" },
+          ],
+        },
+        {
+          day: "Day 03",
+          focus: "Lower Body Power & Quads",
+          lifts: [
+            { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Solid depth" },
+            { name: "Leg Press", setsReps: "3 sets × 12 reps", note: "Quad pump" },
+            { name: "Walking Lunges", setsReps: "3 sets × 12 steps", note: "Unilateral drive" },
+            { name: "Calf Raises", setsReps: "4 sets × 15 reps", note: "Peak contraction" },
+          ],
+        },
+        {
+          day: "Day 04",
+          focus: "Upper Density & Delts Focus",
+          lifts: [
+            { name: "Standing Overhead Press", setsReps: "4 sets × 8 reps", note: "Shoulder power" },
+            { name: "Lateral Dumbbell Raises", setsReps: "4 sets × 15 reps", note: "Side delt cap" },
+            { name: "Chest Dips", setsReps: "3 sets × 12 reps", note: "Chest & tricep pump" },
+            { name: "Hammer Curls", setsReps: "3 sets × 12 reps", note: "Forearm & brachialis" },
+          ],
+        },
+        {
+          day: "Day 05",
+          focus: "Posterior Chain & Hamstrings",
+          lifts: [
+            { name: "Romanian Deadlifts (RDL)", setsReps: "4 sets × 10 reps", note: "Hamstring recruitment" },
+            { name: "Seated Cable Row", setsReps: "4 sets × 10 reps", note: "Mid-back thickness" },
+            { name: "Lying Leg Curls", setsReps: "3 sets × 12 reps", note: "Hamstring pump" },
+            { name: "Hanging Leg Raises", setsReps: "3 sets × 15 reps", note: "Core stability" },
+          ],
+        },
+        {
+          day: "Day 06",
+          focus: "Functional Conditioning & Agility",
+          lifts: [
+            { name: "Zone 2 Aerobic Base", setsReps: "30 min steady", note: "Cardiovascular health" },
+            { name: "Plank & Core Circuit", setsReps: "3 rounds × 60s", note: "Abdominal brace" },
+            { name: "Dumbbell Farmers Walk", setsReps: "3 sets × 40m", note: "Grip & trap strength" },
+          ],
+        },
+      ];
+    } else {
+      // 3-4 Days Recomp
+      exercises = [
+        {
+          day: "Day 01",
+          focus: "Upper Body Power Focus",
+          lifts: [
+            { name: "Barbell Bench Press", setsReps: "4 sets × 8 reps", note: "Progressive overload" },
+            { name: "Bent Over Rows", setsReps: "4 sets × 8 reps", note: "Full back tension" },
+            { name: "Dumbbell Shoulder Press", setsReps: "3 sets × 10 reps", note: "Shoulder strength" },
+          ],
+        },
+        {
+          day: "Day 02",
+          focus: "Lower Body Hypertrophy",
+          lifts: [
+            { name: "Barbell Squats", setsReps: "4 sets × 8 reps", note: "Solid depth" },
+            { name: "Romanian Deadlifts", setsReps: "3 sets × 10 reps", note: "Hamstring recruitment" },
+            { name: "Calf Raises", setsReps: "4 sets × 15 reps", note: "Peak contraction" },
+          ],
+        },
+        {
+          day: "Day 03",
+          focus: "Conditioning & Agility",
+          lifts: [
+            { name: "Zone 2 Aerobic Base", setsReps: "30 min steady", note: "Cardiovascular health" },
+            { name: "Plank & Core Circuit", setsReps: "3 rounds × 60s", note: "Abdominal brace" },
+          ],
+        },
+        {
+          day: "Day 04",
+          focus: "Full Body Hypertrophy",
+          lifts: [
+            { name: "Dumbbell Incline Press", setsReps: "3 sets × 10 reps", note: "Chest volume" },
+            { name: "Pull-ups / Pulldown", setsReps: "3 sets × 10 reps", note: "Back volume" },
+            { name: "Leg Press", setsReps: "3 sets × 12 reps", note: "Quad pump" },
+          ],
+        },
+      ];
+    }
   }
 
   // Nutrition Plans based on Diet & Weight Status
@@ -344,18 +621,22 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
         "Keep post-workout protein intake within 2 hours of completing your session.",
       ];
 
-  const protocolTitle = isUnderweight
-    ? "Hypertrophic Mass Awakening"
-    : goal === "build"
-    ? "Hypertrophy & Strength Protocol"
-    : goal === "cut"
-    ? "Metabolic Shred Protocol"
-    : "Recomposition & Power Split";
+  const splitLabel = activity === "high" ? "5–6 Days" : activity === "low" ? "1–2 Days" : "3–4 Days";
 
-  const protocolTag = isUnderweight ? "Underweight // Mass Protocol Active" : "Calibrated Protocol";
+  const protocolTitle = isUnderweight
+    ? `Hypertrophic Mass Awakening (${splitLabel})`
+    : goal === "build"
+    ? `Hypertrophy & Strength Protocol (${splitLabel})`
+    : goal === "cut"
+    ? `Metabolic Shred Protocol (${splitLabel})`
+    : `Recomposition & Power Split (${splitLabel})`;
+
+  const protocolTag = isUnderweight
+    ? `Underweight // Mass Protocol (${splitLabel})`
+    : `Calibrated Protocol // ${splitLabel}`;
   const protocolSummary = isUnderweight
-    ? `Your current weight (${weight} kg) is below the optimal threshold for your height (${height} cm) and age (${age}). The system has activated a targeted +${surplusOrDeficit} kcal hyper-surplus and heavy compound resistance split to safely forge lean muscle mass.`
-    : `A balanced protocol tailored to your ${age}-year-old frame and ${goal} goal.`;
+    ? `Your current weight (${weight} kg) is below the optimal threshold for your height (${height} cm) and age (${age}). The system has activated a targeted +${surplusOrDeficit} kcal hyper-surplus and an intensive ${splitLabel.toLowerCase()} compound resistance split to safely forge lean muscle mass.`
+    : `A balanced ${splitLabel.toLowerCase()} protocol tailored to your ${age}-year-old frame and ${goal} goal.`;
 
   return {
     status,

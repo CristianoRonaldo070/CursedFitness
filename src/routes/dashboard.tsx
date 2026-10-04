@@ -6,6 +6,7 @@ import {
   Check,
   CheckCircle2,
   ChevronRight,
+  Droplets,
   Dumbbell,
   Flame,
   Footprints,
@@ -71,6 +72,7 @@ export const Route = createFileRoute("/dashboard")({
 
 const QUEST_DEFS = [
   { id: "steps", title: "8,000 steps", xp: 40, icon: <Footprints /> },
+  { id: "water", title: "3L water intake", xp: 50, icon: <Droplets /> },
   { id: "protein", title: "Hit protein goal", xp: 60, icon: <Salad /> },
   { id: "workout", title: "Main workout", xp: 240, icon: <Dumbbell /> },
 ];
@@ -519,10 +521,14 @@ function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="system-label">
-                      {rec.isUnderweight ? "Mass Gain Hypertrophy Split" : "Training Protocol"}
+                      {rec.isUnderweight
+                        ? `Mass Gain Hypertrophy Split // ${rec.exercises.length} Days`
+                        : `Training Protocol // ${rec.exercises.length} Days`}
                     </p>
                     <h2 className="mt-2 text-3xl font-bold uppercase">
-                      {rec.isUnderweight ? "Compound Mass Routine" : "Weekly Split"}
+                      {rec.isUnderweight
+                        ? `Compound Mass Routine (${rec.exercises.length} Days)`
+                        : `Weekly Split (${rec.exercises.length} Days)`}
                     </h2>
                   </div>
                   <Dumbbell className="text-primary" />
