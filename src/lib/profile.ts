@@ -1,5 +1,7 @@
 import { isSupabaseConfigured, supabase, getCurrentUser } from "./supabase";
 
+export type ChronicIllness = "none" | "diabetes_type_1" | "diabetes_type_2" | "thyroid" | "amenorrhea";
+
 export type FitnessProfile = {
   name: string;
   age: number;
@@ -8,6 +10,8 @@ export type FitnessProfile = {
   goal: "cut" | "build" | "recomp";
   activity: "low" | "moderate" | "high";
   diet: "balanced" | "vegetarian" | "vegan";
+  hasChronicIllness?: boolean;
+  chronicIllness?: ChronicIllness;
   xp?: number;
   completedQuests?: string[];
   isMissionActive?: boolean;
@@ -21,6 +25,8 @@ export const defaultProfile: FitnessProfile = {
   goal: "recomp",
   activity: "moderate",
   diet: "balanced",
+  hasChronicIllness: false,
+  chronicIllness: "none",
   xp: 340,
   completedQuests: [],
   isMissionActive: false,

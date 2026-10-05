@@ -5,12 +5,14 @@ import {
   ChevronDown,
   ChevronUp,
   Flame,
+  HeartPulse,
   Info,
   Layers,
   Leaf,
   RefreshCw,
   Salad,
   Sparkles,
+  Stethoscope,
   Utensils,
   Zap,
 } from "lucide-react";
@@ -170,6 +172,12 @@ export default function DietPage() {
                   Mass Surplus Active (+{rec.calorieSurplusOrDeficit} kcal)
                 </span>
               )}
+              {rec.illnessProtocol && (
+                <span className="border border-primary/40 bg-primary/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-primary flex items-center gap-1">
+                  <HeartPulse className="size-3" />
+                  {rec.illnessProtocol.name}
+                </span>
+              )}
             </div>
             <h1 className="mt-3 text-5xl font-black uppercase md:text-7xl">
               Indian <span className="text-primary">Diet Matrix</span>
@@ -242,6 +250,33 @@ export default function DietPage() {
             </div>
           </div>
         </section>
+
+        {/* Clinical Illness Nutrition Protocol & Rationale */}
+        {rec.illnessProtocol && (
+          <section className="mt-8 border border-primary/50 bg-primary/5 p-6 rounded-xs">
+            <div className="flex items-center gap-2 text-primary font-mono text-xs uppercase tracking-wider">
+              <HeartPulse className="size-4" />
+              <span>Therapeutic Nutrition Protocol // {rec.illnessProtocol.name}</span>
+            </div>
+            <h3 className="mt-2 font-display text-2xl font-bold uppercase text-foreground">
+              Why This Nutrition Framework Is Prescribed for {rec.illnessProtocol.name}
+            </h3>
+            <p className="mt-2 text-xs leading-6 text-muted-foreground">
+              {rec.illnessProtocol.dietRationale}
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {rec.illnessProtocol.clinicalGuidelines.map((guideline, idx) => (
+                <div key={idx} className="border border-border/80 bg-card p-4">
+                  <div className="flex items-center gap-1.5 font-mono text-[10px] text-primary uppercase">
+                    <Stethoscope className="size-3" />
+                    <span>Clinical Directive 0{idx + 1}</span>
+                  </div>
+                  <p className="mt-2 text-xs text-foreground/90 leading-5">{guideline}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Live Macro Summary Bar */}
         <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

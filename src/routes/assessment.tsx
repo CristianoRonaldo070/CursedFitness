@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Activity, ArrowRight, Check, Cloud, Loader2, Ruler, Scale, Target, UserRound } from "lucide-react";
+import { Activity, ArrowRight, Check, Cloud, HeartPulse, Loader2, Ruler, Scale, Stethoscope, Target, UserRound } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/brand";
@@ -153,6 +153,160 @@ function AssessmentPage() {
               onChange={(v) => setProfile({ ...profile, diet: v as FitnessProfile["diet"] })}
             />
 
+            {/* Chronic Illness Question */}
+            <div className="mt-8 border-t border-border/70 pt-6">
+              <div className="flex items-center gap-2">
+                <HeartPulse className="size-4 text-primary" />
+                <span className="system-label text-[9px]">Medical Protocol Calibration</span>
+              </div>
+              <h3 className="mt-2 text-base font-bold uppercase tracking-wide">
+                Do you have a chronic illness?
+              </h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                If you have a diagnosed medical condition, the system will dynamically calibrate your workout volume, rest periods, and nutrition matrix.
+              </p>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <label
+                  className={`cursor-pointer border p-4 transition-colors ${
+                    !profile.hasChronicIllness
+                      ? "border-primary bg-primary/10 shadow-[inset_0_0_20px_var(--system-glow-soft)]"
+                      : "border-border bg-card hover:border-primary/50"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="hasChronicIllness"
+                    className="sr-only"
+                    checked={!profile.hasChronicIllness}
+                    onChange={() =>
+                      setProfile({
+                        ...profile,
+                        hasChronicIllness: false,
+                        chronicIllness: "none",
+                      })
+                    }
+                  />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold">No</span>
+                    {!profile.hasChronicIllness && <Check className="size-4 text-primary" />}
+                  </div>
+                  <span className="mt-1 block text-[11px] text-muted-foreground">
+                    No diagnosed chronic conditions · Standard protocol
+                  </span>
+                </label>
+
+                <label
+                  className={`cursor-pointer border p-4 transition-colors ${
+                    profile.hasChronicIllness
+                      ? "border-primary bg-primary/10 shadow-[inset_0_0_20px_var(--system-glow-soft)]"
+                      : "border-border bg-card hover:border-primary/50"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="hasChronicIllness"
+                    className="sr-only"
+                    checked={Boolean(profile.hasChronicIllness)}
+                    onChange={() =>
+                      setProfile({
+                        ...profile,
+                        hasChronicIllness: true,
+                        chronicIllness:
+                          profile.chronicIllness && profile.chronicIllness !== "none"
+                            ? profile.chronicIllness
+                            : "diabetes_type_1",
+                      })
+                    }
+                  />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-primary">Yes</span>
+                    {profile.hasChronicIllness && <Check className="size-4 text-primary" />}
+                  </div>
+                  <span className="mt-1 block text-[11px] text-muted-foreground">
+                    Diagnosed condition · Requires specialized medical calibration
+                  </span>
+                </label>
+              </div>
+
+              {/* If Yes, show single-selection condition options */}
+              {profile.hasChronicIllness && (
+                <div className="mt-5 border border-primary/40 bg-card/60 p-5 rounded-sm">
+                  <div className="flex items-center gap-2">
+                    <Stethoscope className="size-4 text-primary" />
+                    <p className="system-label text-[9px] text-primary">
+                      Select Your Condition (Single Selection)
+                    </p>
+                  </div>
+                  <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                    {[
+                      {
+                        id: "diabetes_type_1",
+                        title: "Diabetes Type 1",
+                        tag: "Insulin-Dependent",
+                        desc: "GLUT-4 muscle glucose uptake, standardized rest intervals & hypoglycemia prevention",
+                      },
+                      {
+                        id: "diabetes_type_2",
+                        title: "Diabetes Type 2",
+                        tag: "Insulin-Resistance",
+                        desc: "Large-muscle glycogen clearance, post-session walks & glycemic-blunting nutrition",
+                      },
+                      {
+                        id: "thyroid",
+                        title: "Thyroid Disorder",
+                        tag: "Hypo/Metabolic Support",
+                        desc: "Controlled eccentric tempo, cortisol shield & selenium/zinc micronutrient support",
+                      },
+                      {
+                        id: "amenorrhea",
+                        title: "Amenorrhea",
+                        tag: "Hormonal Recovery",
+                        desc: "Low-volume mechanical bone loading, zero exhaustive cardio & lipid-dense hormonal fuel",
+                      },
+                    ].map((item) => (
+                      <label
+                        key={item.id}
+                        className={`cursor-pointer border p-3.5 transition-colors ${
+                          profile.chronicIllness === item.id
+                            ? "border-primary bg-primary/15 shadow-[inset_0_0_15px_var(--system-glow-soft)]"
+                            : "border-border bg-card hover:border-primary/50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="chronicIllness"
+                          className="sr-only"
+                          checked={profile.chronicIllness === item.id}
+                          onChange={() =>
+                            setProfile({
+                              ...profile,
+                              hasChronicIllness: true,
+                              chronicIllness: item.id as FitnessProfile["chronicIllness"],
+                            })
+                          }
+                        />
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold uppercase tracking-wide">
+                            {item.title}
+                          </span>
+                          {profile.chronicIllness === item.id && (
+                            <Check className="size-3.5 text-primary" />
+                          )}
+                        </div>
+                        <span className="mt-0.5 inline-block font-mono text-[9px] text-primary">
+                          [{item.tag}]
+                        </span>
+                        <span className="mt-1 block text-[10px] leading-4 text-muted-foreground">
+                          {item.desc}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Button
               type="submit"
               variant="green"
@@ -188,6 +342,14 @@ function AssessmentPage() {
               <p className="text-center text-xs leading-5 text-muted-foreground">
                 This is a general wellness estimate, not a medical diagnosis.
               </p>
+              {profile.hasChronicIllness && profile.chronicIllness && profile.chronicIllness !== "none" && (
+                <div className="mt-4 border-t border-border pt-3 text-center">
+                  <span className="inline-flex items-center gap-1.5 border border-primary/40 bg-primary/10 px-2.5 py-1 font-mono text-[10px] uppercase text-primary">
+                    <HeartPulse className="size-3" />
+                    Clinical Calibration Active
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="border border-border bg-card p-5">

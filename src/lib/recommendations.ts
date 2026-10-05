@@ -2,6 +2,16 @@ import type { FitnessProfile } from "./profile";
 
 export type WeightStatus = "underweight" | "optimal" | "overweight" | "heavy";
 
+export interface IllnessProtocolInfo {
+  id: "diabetes_type_1" | "diabetes_type_2" | "thyroid" | "amenorrhea";
+  name: string;
+  badge: string;
+  summary: string;
+  exerciseRationale: string;
+  dietRationale: string;
+  clinicalGuidelines: string[];
+}
+
 export interface HunterRecommendation {
   status: WeightStatus;
   statusLabel: string;
@@ -30,10 +40,87 @@ export interface HunterRecommendation {
     evening: { title: string; desc: string; calories: number; protein: number };
   };
   weightGainTips: string[];
+  illnessProtocol?: IllnessProtocolInfo | null;
+}
+
+export function getIllnessProtocol(profile: FitnessProfile): IllnessProtocolInfo | null {
+  if (!profile.hasChronicIllness || !profile.chronicIllness || profile.chronicIllness === "none") {
+    return null;
+  }
+
+  switch (profile.chronicIllness) {
+    case "diabetes_type_1":
+      return {
+        id: "diabetes_type_1",
+        name: "Type 1 Diabetes Mellitus",
+        badge: "Clinical Protocol // Type 1 Diabetes",
+        summary: "Calibrated for insulin dependency. Focuses on steady GLUT-4 muscle glucose uptake, preventing exercise-induced hypoglycemia, and keeping carbohydrate digestion predictable.",
+        exerciseRationale: "Resistance training stimulates GLUT-4 glucose transporter translocation directly to the skeletal muscle cell surface via mechanical contractions, completely independent of insulin. Standardized 90–120s rest intervals prevent erratic adrenaline spikes that cause unpredictable blood glucose volatility. Exhaustive anaerobic burnout is avoided to protect against severe nocturnal hypoglycemia.",
+        dietRationale: "Macronutrients are calibrated around low-glycemic-index (GI) complex carbohydrates and high soluble fiber to slow gastric emptying and prevent postprandial glucose spikes. Consistent carbohydrate-to-protein distributions across meals allow predictable basal-bolus insulin dosing. Pre-workout complex carbs and mandatory intra-workout rapid glucose readiness prevent dangerous hypoglycemic drops.",
+        clinicalGuidelines: [
+          "Mandatory pre-workout blood glucose check (target: 100–180 mg/dL before lifting)",
+          "Keep 15–20g fast-acting carbohydrates (glucose tablets/fruit juice) accessible during workouts",
+          "Avoid training at the peak action window of rapid-acting bolus insulin",
+          "Standardized 90–120 second rests between sets to prevent erratic stress-hormone glucose spikes",
+          "Pair every carbohydrate serving with fiber and protein to slow gastric absorption",
+        ],
+      };
+    case "diabetes_type_2":
+      return {
+        id: "diabetes_type_2",
+        name: "Type 2 Diabetes Mellitus",
+        badge: "Clinical Protocol // Type 2 Diabetes",
+        summary: "Engineered to reverse peripheral insulin resistance. Maximizes glycogen clearance in large muscle groups, enhances mitochondrial sensitivity, and blunts glycemic spikes.",
+        exerciseRationale: "High-volume compound movements in major muscle groups (quads, glutes, lats) deplete intramyocellular glycogen reservoirs. As muscles rebuild these stores, insulin receptor sensitivity remains elevated for up to 48 hours post-workout. Combining resistance training with a 10–15 minute post-workout or post-meal brisk walk rapidly clears circulating glucose without demanding excess pancreatic insulin.",
+        dietRationale: "High-viscous-fiber and moderate-carbohydrate matrix eliminating simple sugars and high-glycemic starches. Incorporates anti-hyperglycemic nutrients (fenugreek/methi, cinnamon, bitter gourd, and chromium-dense greens) that stimulate GLP-1 secretion and slow alpha-glucosidase activity, eliminating sharp postprandial glucose and insulin surges.",
+        clinicalGuidelines: [
+          "Perform 10–15 minutes of light brisk walking immediately following heavy meals or workouts",
+          "Focus on high-volume compound lifts (quads & back) to deplete muscular glycogen reservoirs",
+          "Eliminate refined flours, high-fructose syrups, and processed sugars entirely",
+          "Consume 35g+ dietary fiber daily with soluble beta-glucans, flaxseed, and sprouted legumes",
+          "Incorporate anti-glycemic spices: 1/2 tsp Ceylon cinnamon and soaked fenugreek seeds daily",
+        ],
+      };
+    case "thyroid":
+      return {
+        id: "thyroid",
+        name: "Thyroid Disorder (Hypo/Metabolic Support)",
+        badge: "Clinical Protocol // Thyroid Support",
+        summary: "Designed for metabolic sluggishness and adrenal preservation. Avoids cortisol-elevating exhaustion while stimulating basal metabolic rate and cellular T4-to-T3 conversion.",
+        exerciseRationale: "Excessive high-intensity cardio and exhaustive training spike circulating cortisol, which directly inhibits the peripheral 5'-deiodinase enzyme required to convert inactive thyroxine (T4) into active triiodothyronine (T3). This protocol utilizes low-impact, joint-friendly compound resistance training with controlled 3-second eccentrics to stimulate muscle protein synthesis and boost resting metabolic rate (BMR) without inducing adrenal exhaustion or joint inflammation.",
+        dietRationale: "Supplies critical trace minerals and micronutrients essential for thyroid hormone production: Selenium (antioxidant defense for thyroid peroxidase), Iodine (backbone of T3/T4 molecules), Zinc, and L-Tyrosine. Eliminates harsh caloric starvation deficits (which can depress thyroid output by 25%) and ensures cruciferous vegetables are cooked to deactivate goitrogens.",
+        clinicalGuidelines: [
+          "Avoid chronic exhaustive HIIT: limit intense work to keep cortisol from suppressing T3 conversion",
+          "Ensure all cruciferous vegetables (broccoli, cabbage, cauliflower) are steamed or cooked, not raw",
+          "Incorporate selenium-rich foods (Brazil nuts, eggs, sunflower seeds) and zinc (pumpkin seeds, lentils)",
+          "Avoid extreme low-calorie crash diets; maintain caloric adequacy to prevent metabolic adaptation",
+          "Take thyroid medication (if prescribed) on an empty stomach at least 45 minutes before meals",
+        ],
+      };
+    case "amenorrhea":
+      return {
+        id: "amenorrhea",
+        name: "Hypothalamic Amenorrhea (Hormonal Restoration)",
+        badge: "Clinical Protocol // Hormonal Recovery",
+        summary: "Calibrated for Low Energy Availability (LEA) recovery and neuroendocrine restoration. Replaces exhaustive cardio with restorative strength loading to rebuild bone density and restart menstrual pulsatility.",
+        exerciseRationale: "Hypothalamic amenorrhea is driven by an energy deficit where energy expenditure outpaces dietary intake, causing the brain to halt GnRH pulsatility (suppressing LH, FSH, estrogen, and progesterone). Prolonged cardio and intense HIIT are strictly eliminated to lower systemic cortisol and sympathetic stress. Low-volume, moderate-load resistance training is prioritized solely to stimulate osteoblasts and protect bone mineral density (preventing osteopenia) while keeping sessions under 40 minutes to conserve metabolic energy for hormonal recovery.",
+        dietRationale: "Enforces a mandatory caloric surplus (+300–450 kcal) to signal energetic abundance to the hypothalamus and kisspeptin neurons. Dietary fat is elevated to 30–35%+ of total daily energy because all steroid hormones (estrogen, progesterone) are chemically synthesized from cholesterol and dietary lipids. Carbohydrates are kept abundant to replenish liver glycogen stores, which is the primary metabolic signal triggering resumption of ovulation.",
+        clinicalGuidelines: [
+          "Strictly eliminate endurance running, prolonged cardio, and exhaustive HIIT sessions",
+          "Cap resistance workouts at 35–45 minutes with generous rest between sets",
+          "Consume a minimum of 30–35% of daily calories from healthy fats (ghee, avocado, nuts, whole eggs)",
+          "Maintain consistent carbohydrate intake (minimum 3–4g/kg) to signal energy abundance to the brain",
+          "Prioritize 8–9 hours of sleep nightly to lower sympathetic nervous system tone and cortisol",
+        ],
+      };
+    default:
+      return null;
+  }
 }
 
 export function getHunterRecommendations(profile: FitnessProfile): HunterRecommendation {
   const { age, height, weight, activity, diet, goal } = profile;
+  const illnessProtocol = getIllnessProtocol(profile);
 
   // Calculate BMI
   const heightM = height / 100;
@@ -65,6 +152,12 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
   let surplusOrDeficit = 0;
   if (isUnderweight) {
     surplusOrDeficit = 550;
+  } else if (illnessProtocol?.id === "amenorrhea") {
+    // Amenorrhea requires guaranteed energy availability (+380 kcal) to restart hypothalamic GnRH pulsatility
+    surplusOrDeficit = Math.max(380, goal === "cut" ? 250 : 380);
+  } else if (illnessProtocol?.id === "thyroid" && goal === "cut") {
+    // Avoid deep deficits in thyroid condition to prevent T3 down-regulation
+    surplusOrDeficit = -250;
   } else if (goal === "build") {
     surplusOrDeficit = 350;
   } else if (goal === "cut") {
@@ -76,8 +169,8 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
   const caloricTarget = Math.round((maintenance + surplusOrDeficit) / 10) * 10;
 
   // Target macros (if underweight: 2.1g/kg protein for high muscular anabolism)
-  const proteinGrams = Math.round(weight * (isUnderweight ? 2.1 : goal === "build" ? 2.0 : 1.8));
-  const fatCalories = caloricTarget * 0.28;
+  const fatMultiplier = illnessProtocol?.id === "amenorrhea" ? 0.35 : 0.28;
+  const fatCalories = caloricTarget * fatMultiplier;
   const fatsGrams = Math.round(fatCalories / 9);
   const carbCalories = caloricTarget - (proteinGrams * 4 + fatCalories);
   const carbsGrams = Math.max(120, Math.round(carbCalories / 4));
@@ -493,6 +586,54 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
     }
   }
 
+  // Adapt exercise plan if a chronic illness protocol is active
+  if (illnessProtocol) {
+    exercises = exercises.map((day) => {
+      let illnessTag = "";
+      if (illnessProtocol.id === "diabetes_type_1") {
+        illnessTag = " • T1D GLUT-4 Target";
+      } else if (illnessProtocol.id === "diabetes_type_2") {
+        illnessTag = " • T2D Glycogen Clearance";
+      } else if (illnessProtocol.id === "thyroid") {
+        illnessTag = " • Thyroid Tempo & BMR";
+      } else if (illnessProtocol.id === "amenorrhea") {
+        illnessTag = " • Bone-Loading Restorative";
+      }
+
+      return {
+        ...day,
+        focus: `${day.focus}${illnessTag}`,
+        lifts: day.lifts.map((lift, i) => {
+          if (illnessProtocol.id === "diabetes_type_1" && i === 0) {
+            return {
+              ...lift,
+              note: `${lift.note} (Confirm pre-workout glucose 100–180 mg/dL)`,
+            };
+          }
+          if (illnessProtocol.id === "diabetes_type_2" && i === day.lifts.length - 1) {
+            return {
+              ...lift,
+              note: `${lift.note} + 12-min brisk post-session walk for rapid glucose uptake`,
+            };
+          }
+          if (illnessProtocol.id === "thyroid") {
+            return {
+              ...lift,
+              note: `${lift.note} (Controlled 3s negative; low joint impact)`,
+            };
+          }
+          if (illnessProtocol.id === "amenorrhea") {
+            return {
+              ...lift,
+              note: `${lift.note} (Restorative bone loading, avoid systemic failure)`,
+            };
+          }
+          return lift;
+        }),
+      };
+    });
+  }
+
   // Nutrition Plans based on Diet & Weight Status
   let meals: HunterRecommendation["meals"];
   if (isUnderweight) {
@@ -607,6 +748,143 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
     };
   }
 
+  // Override meals if a specialized chronic condition protocol is active
+  if (illnessProtocol) {
+    if (illnessProtocol.id === "diabetes_type_1") {
+      meals = {
+        morning: {
+          title: "Low-GI Glycemic Stabilizer Breakfast",
+          desc: diet === "vegan"
+            ? "Tofu scramble with spinach, avocado on sprouted sourdough + steel-cut oats with chia seeds, walnuts & Ceylon cinnamon."
+            : "3 whole eggs scrambled with avocado on sprouted grain toast + rolled oats with blueberries, chia & Ceylon cinnamon.",
+          calories: 540,
+          protein: 36,
+        },
+        midday: {
+          title: "Sustained Glucose Power Bowl",
+          desc: diet === "vegan"
+            ? "Sprouted brown lentils, cooked quinoa, edamame, and steamed broccoli with extra-virgin olive oil dressing."
+            : "Grilled herb chicken or paneer, 1 cup brown basmati rice, steamed greens & cucumber raita.",
+          calories: 680,
+          protein: 48,
+        },
+        shake: {
+          title: "Slow-Release Protein & Fiber Shake (Snack)",
+          desc: "1 scoop protein powder + almond milk + 1 tbsp chia seeds + 1 tbsp almond butter + blueberries (Low-GI).",
+          calories: 260,
+          protein: 28,
+        },
+        evening: {
+          title: "High-Fiber Lean Repair Plate",
+          desc: diet === "vegan"
+            ? "Tempeh with sauteed green beans, mushrooms, and complex wild rice with roasted sunflower seeds."
+            : "Baked Atlantic salmon or paneer with asparagus, roasted sweet potato cubes & olive oil drizzle.",
+          calories: 640,
+          protein: 46,
+        },
+      };
+    } else if (illnessProtocol.id === "diabetes_type_2") {
+      meals = {
+        morning: {
+          title: "Insulin-Sensitizing Fenugreek Breakfast",
+          desc: diet === "vegan"
+            ? "Methi (fenugreek) sprouted moong bowl with tofu, avocado slices, and Ceylon cinnamon green tea."
+            : "3 egg scramble with spinach, methi leaves, 1 slice sprouted grain bread & Ceylon cinnamon.",
+          calories: 510,
+          protein: 36,
+        },
+        midday: {
+          title: "Glycemic-Blunting Sprouted Bowl",
+          desc: diet === "vegan"
+            ? "Sprouted kala chana & tempeh salad with cucumber, flaxseed oil, and steamed broccoli."
+            : "Spiced grilled paneer or chicken, 1/2 cup cooked quinoa, large raw salad with apple cider vinaigrette.",
+          calories: 650,
+          protein: 50,
+        },
+        shake: {
+          title: "Cinnamon & Viscous Fiber Refresher (Snack)",
+          desc: "1 scoop whey/pea protein + unsweetened almond milk + 1 tbsp ground flaxseeds + 1/2 tsp Ceylon cinnamon.",
+          calories: 230,
+          protein: 27,
+        },
+        evening: {
+          title: "Karela & Lean Protein Stir-Fry",
+          desc: diet === "vegan"
+            ? "Spiced bitter gourd (karela) with roasted tofu, mixed greens and 1 small millet roti."
+            : "Grilled fish or paneer with sauteed bitter greens, bell peppers and small portion of roasted lentils.",
+          calories: 610,
+          protein: 45,
+        },
+      };
+    } else if (illnessProtocol.id === "thyroid") {
+      meals = {
+        morning: {
+          title: "Selenium & Zinc Fortified Breakfast",
+          desc: diet === "vegan"
+            ? "Sprouted moong & tofu bhurji with roasted pumpkin seeds, 2 Brazil nuts (Selenium peak) & gluten-free toast."
+            : "3 whole eggs scrambled with grass-fed butter, 2 Brazil nuts (Selenium peak), pumpkin seeds & avocado toast.",
+          calories: 560,
+          protein: 36,
+        },
+        midday: {
+          title: "Thyroid Metabolic Nourish Bowl",
+          desc: diet === "vegan"
+            ? "Thoroughly cooked steamed broccoli & carrot bowl with quinoa, roasted chickpeas & turmeric coconut dressing."
+            : "Wild salmon or grilled paneer with cooked asparagus, sweet potato, and turmeric-infused dal.",
+          calories: 690,
+          protein: 48,
+        },
+        shake: {
+          title: "T3/T4 Cofactor Smoothie (Snack)",
+          desc: "1 scoop protein + almond milk + 1 tbsp pumpkin seeds (Zinc) + blueberries + maca root powder.",
+          calories: 250,
+          protein: 28,
+        },
+        evening: {
+          title: "Anti-Inflammatory Golden Turmeric Plate",
+          desc: diet === "vegan"
+            ? "Hearty golden turmeric lentil stew with roasted zucchini, carrots & cooked spinach (no raw goitrogens)."
+            : "Slow-cooked chicken or paneer curry with turmeric, cooked green vegetables, and brown basmati rice.",
+          calories: 640,
+          protein: 45,
+        },
+      };
+    } else if (illnessProtocol.id === "amenorrhea") {
+      meals = {
+        morning: {
+          title: "Hormone-Building Golden Fuel",
+          desc: diet === "vegan"
+            ? "Large oatmeal bowl cooked in coconut milk with tahini, hemp seeds, banana, dates & walnuts."
+            : "3 whole eggs in grass-fed ghee, 2 slices seeded sourdough with avocado, plus oatmeal with full-fat milk & honey.",
+          calories: 780,
+          protein: 38,
+        },
+        midday: {
+          title: "Energy-Availability Replenish Bowl",
+          desc: diet === "vegan"
+            ? "Generous quinoa & sweet potato bowl with baked tempeh, roasted pumpkin, and creamy tahini dressing."
+            : "Generous portion of salmon or paneer in ghee, 1.5 cups jasmine rice, roasted sweet potato wedges & avocado.",
+          calories: 890,
+          protein: 52,
+        },
+        shake: {
+          title: "Endocrine Nourishment Mass Shake (Snack)",
+          desc: "Full-fat milk or coconut milk, 1.5 scoops protein, 2 tbsp almond butter, 1 banana, 2 dates & 1/2 cup oats.",
+          calories: 620,
+          protein: 42,
+        },
+        evening: {
+          title: "Lipid-Dense Reproductive Repair Dinner",
+          desc: diet === "vegan"
+            ? "Rich coconut lentil dal with roasted walnuts, olive oil drizzled roasted roots, and 2 rotis with vegan ghee."
+            : "Paneer butter masala or slow-roasted salmon, 2 whole wheat rotis brushed with ghee, and mixed roasted root vegetables.",
+          calories: 840,
+          protein: 48,
+        },
+      };
+    }
+  }
+
   const weightGainTips = isUnderweight
     ? [
         `Target +${weightDifference > 0 ? weightDifference : 5} kg to reach your ideal minimum body weight (${minIdealWeight} kg for ${height} cm).`,
@@ -623,7 +901,9 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
 
   const splitLabel = activity === "high" ? "5–6 Days" : activity === "low" ? "1–2 Days" : "3–4 Days";
 
-  const protocolTitle = isUnderweight
+  const protocolTitle = illnessProtocol
+    ? `${illnessProtocol.name} Protocol (${splitLabel})`
+    : isUnderweight
     ? `Hypertrophic Mass Awakening (${splitLabel})`
     : goal === "build"
     ? `Hypertrophy & Strength Protocol (${splitLabel})`
@@ -631,10 +911,14 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
     ? `Metabolic Shred Protocol (${splitLabel})`
     : `Recomposition & Power Split (${splitLabel})`;
 
-  const protocolTag = isUnderweight
+  const protocolTag = illnessProtocol
+    ? `${illnessProtocol.badge} // ${splitLabel}`
+    : isUnderweight
     ? `Underweight // Mass Protocol (${splitLabel})`
     : `Calibrated Protocol // ${splitLabel}`;
-  const protocolSummary = isUnderweight
+  const protocolSummary = illnessProtocol
+    ? `Clinical Protocol calibrated for ${illnessProtocol.name}. ${illnessProtocol.summary}`
+    : isUnderweight
     ? `Your current weight (${weight} kg) is below the optimal threshold for your height (${height} cm) and age (${age}). The system has activated a targeted +${surplusOrDeficit} kcal hyper-surplus and an intensive ${splitLabel.toLowerCase()} compound resistance split to safely forge lean muscle mass.`
     : `A balanced ${splitLabel.toLowerCase()} protocol tailored to your ${age}-year-old frame and ${goal} goal.`;
 
@@ -657,5 +941,6 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
     exercises,
     meals,
     weightGainTips,
+    illnessProtocol,
   };
 }

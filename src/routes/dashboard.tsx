@@ -10,11 +10,13 @@ import {
   Dumbbell,
   Flame,
   Footprints,
+  HeartPulse,
   Info,
   RotateCcw,
   Salad,
   ShieldCheck,
   Sparkles,
+  Stethoscope,
   Target,
   Timer,
   Trophy,
@@ -534,6 +536,31 @@ function DashboardPage() {
                   <Dumbbell className="text-primary" />
                 </div>
 
+                {rec.illnessProtocol && (
+                  <div className="mt-4 border border-primary/40 bg-primary/5 p-4 rounded-xs">
+                    <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                      <HeartPulse className="size-4" />
+                      <span>Clinical Exercise Rationale // {rec.illnessProtocol.name}</span>
+                    </div>
+                    <p className="mt-2 text-xs font-semibold text-foreground">
+                      Why this exercise protocol is calibrated for {rec.illnessProtocol.name}:
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                      {rec.illnessProtocol.exerciseRationale}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {rec.illnessProtocol.clinicalGuidelines.map((guideline, idx) => (
+                        <span
+                          key={idx}
+                          className="border border-border/80 bg-card px-2.5 py-1 text-[10px] font-mono text-foreground"
+                        >
+                          ✓ {guideline}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                   {rec.exercises.map((day) => (
                     <div key={day.day} className="border border-border bg-card p-4">
@@ -657,6 +684,21 @@ function DashboardPage() {
                   </Link>
                 </Button>
               </div>
+
+              {rec.illnessProtocol && (
+                <div className="mt-4 border border-primary/40 bg-primary/5 p-4 rounded-xs">
+                  <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                    <Stethoscope className="size-4" />
+                    <span>Therapeutic Nutrition Rationale // {rec.illnessProtocol.name}</span>
+                  </div>
+                  <p className="mt-2 text-xs font-semibold text-foreground">
+                    Why this nutrition plan is calibrated for {rec.illnessProtocol.name}:
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                    {rec.illnessProtocol.dietRationale}
+                  </p>
+                </div>
+              )}
 
               <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                 <div>
