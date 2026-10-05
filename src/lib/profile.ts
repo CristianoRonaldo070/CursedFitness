@@ -131,6 +131,8 @@ export async function fetchProfile(): Promise<FitnessProfile> {
       xp: typeof data.xp === "number" ? data.xp : (local.xp ?? 340),
       completedQuests: Array.isArray(data.completed_quests) ? data.completed_quests : (local.completedQuests ?? []),
       isMissionActive: typeof data.is_mission_active === "boolean" ? data.is_mission_active : (local.isMissionActive ?? false),
+      hasChronicIllness: data.has_chronic_illness ?? local.hasChronicIllness ?? false,
+      chronicIllness: data.chronic_illness ?? local.chronicIllness ?? "none",
     };
 
     saveLocalProfile(remoteProfile);

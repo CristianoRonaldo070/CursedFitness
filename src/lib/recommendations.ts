@@ -169,6 +169,7 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
   const caloricTarget = Math.round((maintenance + surplusOrDeficit) / 10) * 10;
 
   // Target macros (if underweight: 2.1g/kg protein for high muscular anabolism)
+  const proteinGrams = Math.round(weight * (isUnderweight ? 2.1 : goal === "build" ? 2.0 : 1.8));
   const fatMultiplier = illnessProtocol?.id === "amenorrhea" ? 0.35 : 0.28;
   const fatCalories = caloricTarget * fatMultiplier;
   const fatsGrams = Math.round(fatCalories / 9);

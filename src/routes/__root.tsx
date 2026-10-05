@@ -42,15 +42,31 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
 
+  const handleResetCache = () => {
+    try {
+      localStorage.removeItem("cursed-profile");
+      sessionStorage.clear();
+    } catch {
+      // ignore storage access errors
+    }
+    window.location.href = "/";
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+        <h1 className="text-xl font-semibold tracking-tight text-foreground font-display uppercase">
+          System Initialization Interrupted
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          The Hunter protocol encountered an error loading this interface.
         </p>
+        {error?.message && (
+          <div className="mt-4 border border-destructive/40 bg-destructive/10 p-3 text-left rounded-sm">
+            <p className="font-mono text-[10px] text-destructive uppercase tracking-wider">// Error Diagnostic</p>
+            <p className="mt-1 font-mono text-xs text-foreground break-all">{error.message}</p>
+          </div>
+        )}
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -60,6 +76,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Try again
+          </button>
+          <button
+            onClick={handleResetCache}
+            className="inline-flex items-center justify-center rounded-md border border-destructive/50 bg-background px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+          >
+            Reset Profile Data
           </button>
           <a
             href="/"

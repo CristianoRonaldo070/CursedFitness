@@ -537,7 +537,7 @@ function DashboardPage() {
                 </div>
 
                 {rec.illnessProtocol && (
-                  <div className="mt-4 border border-primary/40 bg-primary/5 p-4 rounded-xs">
+                  <div className="mt-4 border border-primary/40 bg-primary/5 p-4 rounded-sm">
                     <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
                       <HeartPulse className="size-4" />
                       <span>Clinical Exercise Rationale // {rec.illnessProtocol.name}</span>
@@ -548,16 +548,18 @@ function DashboardPage() {
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">
                       {rec.illnessProtocol.exerciseRationale}
                     </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {rec.illnessProtocol.clinicalGuidelines.map((guideline, idx) => (
-                        <span
-                          key={idx}
-                          className="border border-border/80 bg-card px-2.5 py-1 text-[10px] font-mono text-foreground"
-                        >
-                          ✓ {guideline}
-                        </span>
-                      ))}
-                    </div>
+                    {rec.illnessProtocol.clinicalGuidelines && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {rec.illnessProtocol.clinicalGuidelines.map((guideline, idx) => (
+                          <span
+                            key={idx}
+                            className="border border-border/80 bg-card px-2.5 py-1 text-[10px] font-mono text-foreground"
+                          >
+                            ✓ {guideline}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -636,7 +638,7 @@ function DashboardPage() {
                     </span>
                     <span className="font-mono text-[9px] text-success">+{q.xp} XP</span>
                     <div
-                      className={`grid size-5 place-items-center border rounded-xs transition-colors ${
+                      className={`grid size-5 place-items-center border rounded-sm transition-colors ${
                         isDone
                           ? "border-success bg-success text-success-foreground"
                           : "border-border text-muted-foreground"
@@ -686,7 +688,7 @@ function DashboardPage() {
               </div>
 
               {rec.illnessProtocol && (
-                <div className="mt-4 border border-primary/40 bg-primary/5 p-4 rounded-xs">
+                <div className="mt-4 border border-primary/40 bg-primary/5 p-4 rounded-sm">
                   <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
                     <Stethoscope className="size-4" />
                     <span>Therapeutic Nutrition Rationale // {rec.illnessProtocol.name}</span>
