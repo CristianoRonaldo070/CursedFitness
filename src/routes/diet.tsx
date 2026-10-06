@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  Calendar,
   Check,
   ChevronDown,
   ChevronUp,
@@ -277,6 +278,76 @@ export default function DietPage() {
                 ))}
               </div>
             )}
+          </section>
+        )}
+
+        {/* Menstrual Cycle Nutrition Protocol & Rationale */}
+        {rec.periodCycleInfo && (
+          <section className={`mt-8 border p-6 rounded-sm ${
+            rec.periodCycleInfo.isOnPeriod
+              ? "border-pink-500/60 bg-pink-500/10 shadow-[0_0_20px_rgba(236,72,153,0.15)]"
+              : "border-pink-500/30 bg-pink-500/5"
+          }`}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-pink-400 font-mono text-xs uppercase tracking-wider">
+                <Calendar className="size-4" />
+                <span>Menstrual Cycle Nutrition // {rec.periodCycleInfo.phaseLabel}</span>
+              </div>
+              <span className="font-mono text-[10px] text-pink-400 border border-pink-500/40 px-2.5 py-0.5 rounded-sm">
+                {rec.periodCycleInfo.isOnPeriod
+                  ? `ACTIVE MENSTRUAL PHASE // DAY ${rec.periodCycleInfo.periodDay} OF ${rec.periodCycleInfo.periodDuration}`
+                  : `Next Period: ~${rec.periodCycleInfo.daysUntilNext} Days`}
+              </span>
+            </div>
+            <h3 className="mt-2 font-display text-2xl font-bold uppercase text-foreground">
+              {rec.periodCycleInfo.isOnPeriod
+                ? "Why This Period Nutrition Framework Is Prescribed"
+                : `Nutritional Directives for ${rec.periodCycleInfo.phaseLabel}`}
+            </h3>
+            <p className="mt-2 text-xs leading-6 text-muted-foreground">
+              {rec.periodCycleInfo.nutritionAdvice}
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="border border-border/80 bg-card p-4">
+                <span className="font-mono text-[10px] text-pink-400 uppercase tracking-wider">
+                  Nutritional Pillar 01
+                </span>
+                <p className="mt-1 font-semibold text-xs text-foreground">
+                  {rec.periodCycleInfo.isOnPeriod ? "Iron & Micronutrient Replenishment" : "Phase-Specific Energy Balance"}
+                </p>
+                <p className="mt-1 text-[11px] text-muted-foreground leading-4">
+                  {rec.periodCycleInfo.isOnPeriod
+                    ? "Replenishes hemoglobin losses with spinach, lentils, beetroot, dates & seeds."
+                    : "Calibrated to your hormonal fluctuations and recovery demands."}
+                </p>
+              </div>
+              <div className="border border-border/80 bg-card p-4">
+                <span className="font-mono text-[10px] text-pink-400 uppercase tracking-wider">
+                  Nutritional Pillar 02
+                </span>
+                <p className="mt-1 font-semibold text-xs text-foreground">
+                  {rec.periodCycleInfo.isOnPeriod ? "Anti-Inflammatory & Anti-Cramp" : "Metabolic Efficiency"}
+                </p>
+                <p className="mt-1 text-[11px] text-muted-foreground leading-4">
+                  {rec.periodCycleInfo.isOnPeriod
+                    ? "Turmeric, ginger, dark chocolate (magnesium), and omega-3s to ease prostaglandin spasms."
+                    : "Lean proteins and complex carbohydrates for sustained athletic stamina."}
+                </p>
+              </div>
+              <div className="border border-border/80 bg-card p-4">
+                <span className="font-mono text-[10px] text-pink-400 uppercase tracking-wider">
+                  Nutritional Pillar 03
+                </span>
+                <p className="mt-1 font-semibold text-xs text-foreground">
+                  {rec.periodCycleInfo.isOnPeriod ? "Warm Digestion & Hydration" : "Recovery Support"}
+                </p>
+                <p className="mt-1 text-[11px] text-muted-foreground leading-4">
+                  {rec.periodCycleInfo.isOnPeriod
+                    ? "Warm broths, khichdi, herbal teas, and reduced cold foods to reduce abdominal stagnation."
+                    : "Adequate hydration and micronutrient density across all meals."}
+                </p>
+              </div>
+            </div>
           </section>
         )}
 

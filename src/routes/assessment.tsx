@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Activity, ArrowRight, Check, Cloud, HeartPulse, Loader2, Ruler, Scale, Stethoscope, Target, UserRound } from "lucide-react";
+import { Activity, ArrowRight, Calendar, Check, Cloud, HeartPulse, Loader2, Ruler, Scale, Stethoscope, Target, UserRound } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/brand";
@@ -129,6 +129,93 @@ function AssessmentPage() {
                 </select>
               </label>
             </div>
+
+            <ChoiceGroup
+              label="Gender"
+              icon={<UserRound />}
+              value={profile.gender ?? "male"}
+              choices={[
+                ["male", "Male", "Standard protocol"],
+                ["female", "Female", "Includes cycle-aware training"],
+              ]}
+              onChange={(v) => {
+                const gender = v as FitnessProfile["gender"];
+                setProfile({
+                  ...profile,
+                  gender,
+                  // Clear period data when switching to male
+                  ...(gender === "male" ? {
+                    periodCycleStartDate: undefined,
+                    periodCycleDuration: undefined,
+                    periodCycleLength: undefined,
+                  } : {}),
+                });
+              }}
+            />
+
+            {/* Period Cycle Configuration — only for females */}
+            {profile.gender === "female" && (
+              <div className="mt-6 border border-pink-500/40 bg-pink-500/5 p-5 rounded-sm">
+                <div className="flex items-center gap-2">
+                  <Calendar className="size-4 text-pink-400" />
+                  <span className="system-label text-[9px] text-pink-400">Menstrual Cycle Calibration</span>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Set your cycle details so the system can adapt exercises and nutrition during your period days — replacing heavy lifts with restorative yoga and providing iron-rich, anti-inflammatory meals.
+                </p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                  <label>
+                    <span className="system-label flex items-center gap-2 text-[9px]">
+                      <Calendar className="size-3.5" /> Last period start date
+                    </span>
+                    <input
+                      type="date"
+                      value={profile.periodCycleStartDate ?? ""}
+                      onChange={(e) =>
+                        setProfile({ ...profile, periodCycleStartDate: e.target.value })
+                      }
+                      className="mt-2 h-12 w-full rounded-sm border border-input bg-card px-3 text-sm outline-none focus:border-pink-400"
+                    />
+                  </label>
+                  <label>
+                    <span className="system-label flex items-center gap-2 text-[9px]">
+                      Period duration
+                    </span>
+                    <select
+                      value={profile.periodCycleDuration ?? 5}
+                      onChange={(e) =>
+                        setProfile({ ...profile, periodCycleDuration: Number(e.target.value) })
+                      }
+                      className="mt-2 h-12 w-full rounded-sm border border-input bg-card px-3 text-sm outline-none focus:border-pink-400"
+                    >
+                      {[3, 4, 5, 6, 7].map((d) => (
+                        <option key={d} value={d}>
+                          {d} days
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span className="system-label flex items-center gap-2 text-[9px]">
+                      Full cycle length
+                    </span>
+                    <select
+                      value={profile.periodCycleLength ?? 28}
+                      onChange={(e) =>
+                        setProfile({ ...profile, periodCycleLength: Number(e.target.value) })
+                      }
+                      className="mt-2 h-12 w-full rounded-sm border border-input bg-card px-3 text-sm outline-none focus:border-pink-400"
+                    >
+                      {Array.from({ length: 15 }, (_, i) => 21 + i).map((d) => (
+                        <option key={d} value={d}>
+                          {d} days {d === 28 ? "(avg)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              </div>
+            )}
 
             <ChoiceGroup
               label="Activity level"
@@ -347,6 +434,14 @@ function AssessmentPage() {
                   <span className="inline-flex items-center gap-1.5 border border-primary/40 bg-primary/10 px-2.5 py-1 font-mono text-[10px] uppercase text-primary">
                     <HeartPulse className="size-3" />
                     Clinical Calibration Active
+                  </span>
+                </div>
+              )}
+              {profile.gender === "female" && profile.periodCycleStartDate && (
+                <div className="mt-3 border-t border-border pt-3 text-center">
+                  <span className="inline-flex items-center gap-1.5 border border-pink-500/40 bg-pink-500/10 px-2.5 py-1 font-mono text-[10px] uppercase text-pink-400">
+                    <Calendar className="size-3" />
+                    Cycle Tracking Configured ({profile.periodCycleDuration ?? 5}d / {profile.periodCycleLength ?? 28}d)
                   </span>
                 </div>
               )}

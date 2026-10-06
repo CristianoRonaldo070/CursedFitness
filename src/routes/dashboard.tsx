@@ -3,6 +3,7 @@ import {
   Activity,
   AlertTriangle,
   ArrowUpRight,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -563,6 +564,35 @@ function DashboardPage() {
                   </div>
                 )}
 
+                {rec.periodCycleInfo && (
+                  <div className={`mt-4 border p-4 rounded-sm ${
+                    rec.periodCycleInfo.isOnPeriod
+                      ? "border-pink-500/60 bg-pink-500/10 shadow-[0_0_15px_rgba(236,72,153,0.15)]"
+                      : "border-pink-500/30 bg-pink-500/5"
+                  }`}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 text-pink-400 font-bold text-xs uppercase tracking-wider">
+                        <Calendar className="size-4" />
+                        <span>Menstrual Cycle Status // {rec.periodCycleInfo.phaseLabel}</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-pink-400 border border-pink-500/40 px-2 py-0.5 rounded-sm">
+                        {rec.periodCycleInfo.isOnPeriod
+                          ? `ACTIVE PERIOD // DAY ${rec.periodCycleInfo.periodDay} OF ${rec.periodCycleInfo.periodDuration}`
+                          : `Next Period: ~${rec.periodCycleInfo.daysUntilNext} Days`}
+                      </span>
+                    </div>
+
+                    <p className="mt-2 text-xs font-semibold text-foreground">
+                      {rec.periodCycleInfo.isOnPeriod
+                        ? `Why light movement & restorative yoga are prescribed during your period:`
+                        : `Cycle-Phase Training Calibration:`}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                      {rec.periodCycleInfo.exerciseAdvice}
+                    </p>
+                  </div>
+                )}
+
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                   {rec.exercises.map((day) => (
                     <div key={day.day} className="border border-border bg-card p-4">
@@ -698,6 +728,27 @@ function DashboardPage() {
                   </p>
                   <p className="mt-1 text-xs leading-5 text-muted-foreground">
                     {rec.illnessProtocol.dietRationale}
+                  </p>
+                </div>
+              )}
+
+              {rec.periodCycleInfo && (
+                <div className={`mt-4 border p-4 rounded-sm ${
+                  rec.periodCycleInfo.isOnPeriod
+                    ? "border-pink-500/60 bg-pink-500/10 shadow-[0_0_15px_rgba(236,72,153,0.15)]"
+                    : "border-pink-500/30 bg-pink-500/5"
+                }`}>
+                  <div className="flex items-center gap-2 text-pink-400 font-bold text-xs uppercase tracking-wider">
+                    <Calendar className="size-4" />
+                    <span>Cycle Nutrition Calibration // {rec.periodCycleInfo.phaseLabel}</span>
+                  </div>
+                  <p className="mt-2 text-xs font-semibold text-foreground">
+                    {rec.periodCycleInfo.isOnPeriod
+                      ? "Why your meals are calibrated for your menstrual period:"
+                      : "Nutritional focus for this cycle phase:"}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                    {rec.periodCycleInfo.nutritionAdvice}
                   </p>
                 </div>
               )}

@@ -1,4 +1,5 @@
 import type { FitnessProfile } from "./profile";
+import { type PeriodCycleInfo, getPeriodCycleInfo, getPeriodExercises, getPeriodMeals } from "./period-cycle";
 
 export type WeightStatus = "underweight" | "optimal" | "overweight" | "heavy";
 
@@ -41,6 +42,7 @@ export interface HunterRecommendation {
   };
   weightGainTips: string[];
   illnessProtocol?: IllnessProtocolInfo | null;
+  periodCycleInfo?: PeriodCycleInfo | null;
 }
 
 export function getIllnessProtocol(profile: FitnessProfile): IllnessProtocolInfo | null {
@@ -923,6 +925,18 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
     ? `Your current weight (${weight} kg) is below the optimal threshold for your height (${height} cm) and age (${age}). The system has activated a targeted +${surplusOrDeficit} kcal hyper-surplus and an intensive ${splitLabel.toLowerCase()} compound resistance split to safely forge lean muscle mass.`
     : `A balanced ${splitLabel.toLowerCase()} protocol tailored to your ${age}-year-old frame and ${goal} goal.`;
 
+  // Period Cycle Awareness — override exercises and meals if user is in menstrual phase
+  const periodCycleInfo = getPeriodCycleInfo(profile);
+  let finalExercises = exercises;
+  let finalMeals = meals;
+
+  if (periodCycleInfo?.isOnPeriod) {
+    // Replace all scheduled exercises with gentle yoga & restorative movement
+    finalExercises = getPeriodExercises(periodCycleInfo.periodDay);
+    // Replace meals with iron-rich, anti-inflammatory period nutrition
+    finalMeals = getPeriodMeals(diet);
+  }
+
   return {
     status,
     statusLabel: isUnderweight ? "Underweight (Mass Gain Required)" : status === "optimal" ? "Optimal Mass Range" : "Above Average Mass",
@@ -939,9 +953,10 @@ export function getHunterRecommendations(profile: FitnessProfile): HunterRecomme
     protocolTag,
     protocolSummary,
     ageInsight,
-    exercises,
-    meals,
+    exercises: finalExercises,
+    meals: finalMeals,
     weightGainTips,
     illnessProtocol,
+    periodCycleInfo,
   };
 }

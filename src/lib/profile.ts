@@ -10,6 +10,10 @@ export type FitnessProfile = {
   goal: "cut" | "build" | "recomp";
   activity: "low" | "moderate" | "high";
   diet: "balanced" | "vegetarian" | "vegan";
+  gender?: "male" | "female";
+  periodCycleStartDate?: string; // ISO date string (YYYY-MM-DD) — first day of last period
+  periodCycleDuration?: number;  // how many days the period lasts (3–7)
+  periodCycleLength?: number;    // full cycle length in days (21–35, default 28)
   hasChronicIllness?: boolean;
   chronicIllness?: ChronicIllness;
   xp?: number;
@@ -25,6 +29,7 @@ export const defaultProfile: FitnessProfile = {
   goal: "recomp",
   activity: "moderate",
   diet: "balanced",
+  gender: "male",
   hasChronicIllness: false,
   chronicIllness: "none",
   xp: 340,
@@ -128,6 +133,10 @@ export async function fetchProfile(): Promise<FitnessProfile> {
       goal: data.goal ?? local.goal,
       activity: data.activity ?? local.activity,
       diet: data.diet ?? local.diet,
+      gender: data.gender ?? local.gender ?? "male",
+      periodCycleStartDate: data.period_cycle_start_date ?? local.periodCycleStartDate,
+      periodCycleDuration: data.period_cycle_duration ?? local.periodCycleDuration,
+      periodCycleLength: data.period_cycle_length ?? local.periodCycleLength,
       xp: typeof data.xp === "number" ? data.xp : (local.xp ?? 340),
       completedQuests: Array.isArray(data.completed_quests) ? data.completed_quests : (local.completedQuests ?? []),
       isMissionActive: typeof data.is_mission_active === "boolean" ? data.is_mission_active : (local.isMissionActive ?? false),
